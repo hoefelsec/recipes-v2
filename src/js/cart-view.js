@@ -32,17 +32,20 @@ import {
   ESCOPO_CARRINHO, carregarEscolhas, escolher as gravarEscolha,
   carregarTenho, marcarTenho
 } from "./choices.js";
+import { comparativoDeMercado } from "./market-compare.js";
 
 export const PASSOS = [
   { numero: 1, rotulo: "Receitas", titulo: "Revise as receitas", url: "#/carrinho" },
-  { numero: 2, rotulo: "Compra", titulo: "Revise a compra", url: "#/carrinho?passo=2" },
-  { numero: 3, rotulo: "Imprimir", titulo: "Folha de compras", url: "#/lista" }
+  { numero: 2, rotulo: "Mercado", titulo: "Escolha o mercado", url: "#/carrinho?passo=2" },
+  { numero: 3, rotulo: "Compra", titulo: "Revise a compra", url: "#/carrinho?passo=3" },
+  { numero: 4, rotulo: "Imprimir", titulo: "Folha de compras", url: "#/lista" }
 ];
 
-/** O passo pedido na URL, dentro dos limites. O terceiro é outra rota. */
+/** O passo pedido na URL, dentro dos limites do carrinho (1 a 3). O 4º é outra rota. */
 export const passoValido = valor => {
   const n = Number(valor);
-  return Number.isFinite(n) && n >= 2 ? 2 : 1;
+  if (!Number.isFinite(n)) return 1;
+  return Math.min(3, Math.max(1, Math.round(n)));
 };
 
 const dataAttrs = dados =>
@@ -454,6 +457,105 @@ function compraHTML(t) {
     </p>`;
 }
 
+/* ----------------------------------------------- passo 2: escolher mercado */
+
+/** O cabeçalho de uma coluna de mercado: logo, nome, selo e botão de escolher. */
+function colunaMercado(m, ativo, melhor) {
+  const eAtivo = m.id === ativo;
+  return `
+    <th scope="col" class="mc-col${eAtivo ? " ativo" : ""}${m.id === melhor ? " melhor" : ""}">
+      <span class="mc-col-topo">
+        <img class="mc-logo" src="${esc(m.logo)}" alt="" onerror="this.remove()">
+        <b>${esc(m.nome)}</b>
+      </span>
+      ${m.id === melhor ? `<span class="mc-selo">melhor opção</span>` : ""}
+      <button type="button" class="mc-escolher${eAtivo ? " atual" : ""}" data-escolher-mercado="${esc(m.id)}">
+        ${eAtivo ? '<i class="fa-solid fa-check" aria-hidden="true"></i> Escolhido' : "Escolher"}
+      </button>
+    </th>`;
+}
+
+/** Uma célula da tabela: o custo, ou o aviso amarelo/vermelho. */
+function celulaMercado(c, melhor) {
+  const classe = `mc-cel${c.estado ? ` ${c.estado}` : ""}${melhor ? " melhor" : ""}`;
+
+  if (c.valor != null) {
+    const emb = c.embalagens != null
+      ? `<small>${c.embalagens} ${c.embalagens === 1 ? "emb." : "embs."}</small>` : "";
+    const aviso = c.estado === "alerta"
+      ? `<i class="fa-solid fa-triangle-exclamation mc-icone" title="${esc(c.motivo)}" aria-hidden="true"></i> ` : "";
+    const titulo = c.produto ? `${c.produto.nome}${c.produto.marca ? ` (${c.produto.marca})` : ""}` : "";
+    return `<td class="${classe}" title="${esc([titulo, c.motivo].filter(Boolean).join(" — "))}">
+              ${aviso}<b>${esc(textoCusto(c.valor))}</b>${emb}
+            </td>`;
+  }
+
+  const icone = c.estado === "errada" ? "fa-ban" : "fa-triangle-exclamation";
+  return `<td class="${classe}" title="${esc(c.motivo ?? "")}">
+            <span class="mc-sem"><i class="fa-solid ${icone}" aria-hidden="true"></i></span>
+          </td>`;
+}
+
+function mercadoHTML(comp, ativo) {
+  const { mercados, linhas, matriz, totais, melhor } = comp;
+
+  const corpo = linhas.map(l => {
+    const contexto = [textoPrecisa(l.precisa), l.escolhidoNome].filter(Boolean).join(" · ");
+    const celulas = mercados
+      .map(m => celulaMercado(matriz.get(l.chave).get(m.id), m.id === melhor))
+      .join("");
+    return `
+      <tr>
+        <th scope="row" class="mc-ing">
+          ${esc(l.ing.nome)}
+          <small>${esc(contexto)}</small>
+        </th>
+        ${celulas}
+      </tr>`;
+  }).join("");
+
+  const totalRow = mercados.map(m => {
+    const t = totais.get(m.id);
+    return `<td class="mc-cel${m.id === melhor ? " melhor" : ""}">
+      ${t.faltas ? `<span class="mc-piso">faltam ${t.faltas}</span>` : ""}
+      <b>${esc(textoCusto(t.valor))}</b>
+    </td>`;
+  }).join("");
+
+  return `
+    <p class="compra-dica">
+      Cada preço é o mais barato para a quantidade que a compra precisa, em
+      embalagens inteiras. Onde você escolheu um produto, é o preço dele.
+      Escolha um mercado para seguir para a compra.
+    </p>
+
+    <div class="mc-wrap">
+      <table class="mercado-tabela">
+        <thead>
+          <tr>
+            <th scope="col" class="mc-canto">Ingrediente</th>
+            ${mercados.map(m => colunaMercado(m, ativo, melhor)).join("")}
+          </tr>
+        </thead>
+        <tbody>${corpo}</tbody>
+        <tfoot>
+          <tr class="mc-total">
+            <th scope="row">Total estimado</th>
+            ${totalRow}
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <p class="compra-nota">
+      <i class="fa-solid fa-triangle-exclamation nota-amarela" aria-hidden="true"></i>
+      amarelo: o produto escolhido não é vendido ali — o preço é do mais barato que serve.
+      <i class="fa-solid fa-ban nota-vermelha" aria-hidden="true"></i>
+      vermelho: o mercado não vende nenhum produto para o ingrediente, e o total vira um piso.
+      Preços fictícios, para teste.
+    </p>`;
+}
+
 /** O bloco no alto da janela do passo 2: quem pede este ingrediente, e quanto. */
 function contextoDoIngrediente(l, itens, escolhas) {
   const pedidos = [];
@@ -527,32 +629,43 @@ export function renderizarCarrinho(alvo, { passo = 1 } = {}) {
     const pratos = itens.reduce((s, i) => s + i.qtd, 0);
     const info = PASSOS.find(p => p.numero === atual);
 
-    const corpo = atual === 1
-      ? `<p class="area-sub">${itens.length} ${itens.length === 1 ? "receita" : "receitas"},
+    let corpo;
+    if (atual === 1) {
+      corpo = `<p class="area-sub">${itens.length} ${itens.length === 1 ? "receita" : "receitas"},
            ${pratos} ${pratos === 1 ? "preparo" : "preparos"}. A mesma receita com porções
            diferentes fica em linhas separadas.</p>
          <ul class="cart-lista">${itens
            .map((it, i) => linhaReceita(it, compra.porItem[i], abertas.has(it.chave), escolhas, mercado))
-           .join("")}</ul>`
-      : (compra.contados ? compraHTML(compra) : `<p class="area-sub">Nada para comprar.</p>`);
+           .join("")}</ul>`;
+    } else if (atual === 2) {
+      const comp = comparativoDeMercado(itens, escolhas);
+      corpo = comp.linhas.length
+        ? mercadoHTML(comp, mercado)
+        : `<p class="area-sub">Nada para comparar entre os mercados.</p>`;
+    } else {
+      corpo = compra.contados ? compraHTML(compra) : `<p class="area-sub">Nada para comprar.</p>`;
+    }
+
+    const rodape = atual === 1
+      ? `<button type="button" class="btn-texto" id="limpar-carrinho">Limpar carrinho</button>
+         <a class="btn-primario" href="#/carrinho?passo=2">Escolher mercado</a>`
+      : atual === 2
+        ? `<a class="btn-texto" href="#/carrinho">Voltar às receitas</a>
+           <a class="btn-primario" href="#/carrinho?passo=3">Continuar para a compra</a>`
+        : `<a class="btn-texto" href="#/carrinho?passo=2">Voltar ao mercado</a>
+           <a class="btn-primario" id="ir-imprimir" href="#/lista?imprimir=1">Imprimir a lista</a>`;
 
     alvo.innerHTML = `
       <div class="area">
         <header class="area-head">
-          <p class="eyebrow-escuro">Lista de compras · passo ${atual} de 3</p>
+          <p class="eyebrow-escuro">Lista de compras · passo ${atual} de 4</p>
           <h1>${esc(info.titulo)}</h1>
           ${trilha(atual)}
         </header>
 
         ${corpo}
 
-        <div class="cart-rodape">
-          ${atual === 1
-            ? `<button type="button" class="btn-texto" id="limpar-carrinho">Limpar carrinho</button>
-               <a class="btn-primario" href="#/carrinho?passo=2">Revisar a compra</a>`
-            : `<a class="btn-texto" href="#/carrinho">Voltar às receitas</a>
-               <a class="btn-primario" id="ir-imprimir" href="#/lista?imprimir=1">Imprimir a lista</a>`}
-        </div>
+        <div class="cart-rodape">${rodape}</div>
       </div>`;
 
     picker.atualizar();
@@ -651,7 +764,27 @@ export function renderizarCarrinho(alvo, { passo = 1 } = {}) {
 
   /* ------------------------------------------------------------- eventos */
 
+  /**
+   * Escolhe um mercado na tabela e segue para a compra.
+   *
+   * Passa pelo seletor do cabeçalho (dispara `change`) em vez de gravar direto: é
+   * ele que o `app.js` escuta para trocar o mercado ativo e redesenhar tudo em
+   * sincronia — o preço da receita, os totais, o próprio seletor. Depois troca o
+   * passo para a compra.
+   */
+  function escolherMercado(id) {
+    const sel = document.querySelector("#mercado-topo select");
+    if (sel && sel.value !== id) {
+      sel.value = id;
+      sel.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    if (window.location.hash !== "#/carrinho?passo=3") window.location.hash = "#/carrinho?passo=3";
+  }
+
   const aoClicar = e => {
+    const escMerc = e.target.closest("[data-escolher-mercado]");
+    if (escMerc) { escolherMercado(escMerc.dataset.escolherMercado); return; }
+
     const stepper = e.target.closest(".pbtn");
     if (stepper && !stepper.disabled) {
       const { slug, porcoes, campo, delta } = stepper.dataset;

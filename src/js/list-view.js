@@ -114,7 +114,7 @@ function folhaHTML(itens) {
       </p>
 
       <div class="lista-acoes">
-        <a class="btn-texto" href="#/carrinho?passo=2">Voltar à revisão</a>
+        <a class="btn-texto" href="#/carrinho?passo=3">Voltar à revisão</a>
         <button type="button" class="btn-primario" id="btn-imprimir">Imprimir / salvar em PDF</button>
       </div>
     </div>`;

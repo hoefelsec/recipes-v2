@@ -272,6 +272,108 @@ button.compra-item { cursor: pointer; }
 .prod-quem li b { font-variant-numeric: tabular-nums; }
 .prod-quem-total { margin-top: 8px; font-size: .88rem; }
 
+/* ===================================================== escolher mercado === */
+
+.mc-wrap {
+  overflow-x: auto;
+  margin-bottom: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  background: var(--paper);
+}
+.mercado-tabela {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  background: var(--paper);
+}
+.mercado-tabela th,
+.mercado-tabela td {
+  padding: 12px 14px;
+  text-align: right;
+  border-bottom: 1px solid var(--line);
+}
+.mercado-tabela thead th {
+  background: var(--paper-2);
+  border-bottom: 2px solid var(--line-strong);
+  vertical-align: bottom;
+}
+.mc-canto, .mc-ing { text-align: left; }
+.mc-canto {
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--ink-faint);
+  font-weight: 600;
+}
+
+/* Colunas de mercado */
+.mc-col { min-width: 130px; text-align: center; }
+.mc-col-topo { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.mc-col-topo b { font-family: var(--font-display); color: var(--ink); }
+.mc-logo { width: 22px; height: 22px; border-radius: 5px; object-fit: contain; }
+.mc-selo {
+  display: inline-block;
+  margin-top: 5px;
+  font-size: .64rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: #fff;
+  background: var(--verde-escuro);
+  border-radius: var(--radius-pill);
+  padding: 2px 9px;
+}
+.mc-escolher {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 9px;
+  border: 1px solid var(--line-strong);
+  background: var(--paper);
+  color: var(--verde-escuro);
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  padding: 6px 15px;
+  font-size: .82rem;
+  transition: background .15s var(--ease), color .15s var(--ease);
+}
+.mc-escolher:hover { background: var(--wash-verde); }
+.mc-escolher.atual { background: var(--verde-escuro); color: #fff; border-color: var(--verde-escuro); }
+
+/* Coluna ativa/melhor */
+.mc-col.ativo, .mc-col.melhor { background: var(--wash-verde); }
+
+/* Linhas de ingrediente */
+.mc-ing { font-weight: 500; color: var(--ink); }
+.mc-ing small { display: block; font-weight: 400; color: var(--ink-faint); font-size: .76rem; }
+
+/* Células */
+.mc-cel { font-variant-numeric: tabular-nums; }
+.mc-cel b { font-weight: 600; color: var(--ink); }
+.mc-cel small { display: block; font-weight: 400; color: var(--ink-faint); font-size: .72rem; }
+.mc-cel.melhor { background: var(--wash-verde); }
+.mc-cel.melhor b { color: var(--verde-escuro); }
+/* Estados vêm depois de .melhor para vencerem quando coincidem na coluna melhor */
+.mc-cel.alerta { background: var(--amarelo-wash); }
+.mc-cel.alerta b { color: var(--amarelo); }
+.mc-cel.errada { background: var(--vermelho-wash); }
+.mc-icone { color: var(--amarelo); }
+.mc-sem { color: var(--vermelho); font-size: 1.05rem; }
+
+/* Total */
+.mc-total th, .mc-total td { border-top: 2px solid var(--line-strong); border-bottom: none; }
+.mc-total th { font-family: var(--font-display); color: var(--ink); }
+.mc-total .mc-cel b { font-family: var(--font-display); font-size: 1.18rem; color: var(--verde-escuro); }
+.mc-piso {
+  display: block;
+  font-size: .66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--vermelho);
+}
+
 /* ===================================================== folha de compras ==== */
 
 .lista-area { max-width: 780px; }
