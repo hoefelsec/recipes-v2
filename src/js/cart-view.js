@@ -534,11 +534,13 @@ function mercadoHTML(comp, ativo) {
       .join("");
     return `
       <tr class="${l.tenho ? "mc-linha-tenho" : ""}">
-        <th scope="row" class="mc-ing">
+        <td class="mc-check">
           <label class="mc-tenho" title="Já tenho em casa — fora da conta">
             <input type="checkbox" data-tenho="${esc(l.chave)}" ${l.tenho ? "checked" : ""}>
             <span class="sr-only">Já tenho ${esc(l.ing.nome)} em casa</span>
           </label>
+        </td>
+        <th scope="row" class="mc-ing">
           <button type="button" class="mc-ing-btn${fixado ? " fixado" : ""}" data-ing-produtos="${esc(l.ing.id)}"
                   title="${fixado ? "Trocar o produto fixado" : "Escolher o produto deste ingrediente"}">
             <span class="mc-ing-nome">${titulo}</span>
@@ -573,6 +575,9 @@ function mercadoHTML(comp, ativo) {
       <table class="mercado-tabela">
         <thead>
           <tr>
+            <th scope="col" class="mc-check-col" title="Marque o que já tem em casa">
+              <i class="fa-solid fa-house" aria-hidden="true"></i><span class="sr-only">Já tenho em casa</span>
+            </th>
             <th scope="col" class="mc-canto">Ingrediente</th>
             ${mercados.map(m => colunaMercado(m, ativo, melhor)).join("")}
           </tr>
@@ -580,10 +585,12 @@ function mercadoHTML(comp, ativo) {
         <tbody>${corpo}</tbody>
         <tfoot>
           <tr class="mc-total">
+            <td class="mc-check"></td>
             <th scope="row">Total estimado</th>
             ${totalRow}
           </tr>
           <tr class="mc-acoes">
+            <td></td>
             <td></td>
             ${acoesRow}
           </tr>

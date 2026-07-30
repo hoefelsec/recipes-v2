@@ -391,12 +391,12 @@ button.compra-item { cursor: pointer; }
 .mc-acoes td { border-top: none; text-align: center; padding: 6px 10px 14px; }
 .mc-acao.melhor { background: var(--wash-verde); }
 
-/* Caixa "já tenho em casa" ao lado do nome */
+/* Primeira coluna: caixa "já tenho em casa" */
+.mc-check-col, .mc-check { width: 1%; text-align: center; white-space: nowrap; }
+.mc-check-col .fa-house { color: var(--ink-faint); font-size: .85rem; }
 .mc-tenho {
   display: inline-flex;
   align-items: center;
-  vertical-align: middle;
-  margin-right: 10px;
   cursor: pointer;
 }
 .mc-tenho input { width: 18px; height: 18px; accent-color: var(--verde-escuro); }
