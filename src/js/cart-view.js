@@ -17,16 +17,18 @@
  * passo, o que aqui não custa nada.
  */
 
-import { esc, controleDeVida } from "./dom.js";
+import { esc, controleDeVida, abrirDialogo, fecharDialogo, ligarFechamento } from "./dom.js";
 import * as carrinho from "./cart.js";
 import { stepperHTML, fotoHTML, unidadePorcao, precoDaReceita } from "./ui.js";
 import { mercadoAtivo } from "./settings.js";
 import { totaisDaCompra, textoPrecisa } from "./purchase.js";
 import { escalarIngrediente, fator } from "./scaling.js";
-import { maisBarato, custoDoIngrediente, textoCusto, textoPrecoUnitario } from "./pricing.js";
+import { maisBarato, custoDoIngrediente, textoCusto, textoPrecoUnitario, formatarPreco, textoEmbalagem } from "./pricing.js";
 import { ligarJanelaDeProdutos } from "./product-picker.js";
 import { produtosDe } from "../data/produtos.js";
-import { temEmCasa } from "../data/ingredientes.js";
+import { temEmCasa, ingrediente } from "../data/ingredientes.js";
+import { preco, mercadosDe } from "../data/precos.js";
+import { mercado as mercadoPorId } from "../data/mercados.js";
 import { aplicarEscolhas } from "../data/resolve.js";
 import {
   ESCOPO_CARRINHO, carregarEscolhas, escolher as gravarEscolha,
@@ -459,35 +461,42 @@ function compraHTML(t) {
 
 /* ----------------------------------------------- passo 2: escolher mercado */
 
-/** O cabeçalho de uma coluna de mercado: logo, nome, selo e botão de escolher. */
+/** O cabeçalho de uma coluna de mercado: logo, nome e selo. O botão de escolher
+    fica no rodapé da tabela, não aqui. */
 function colunaMercado(m, ativo, melhor) {
-  const eAtivo = m.id === ativo;
   return `
-    <th scope="col" class="mc-col${eAtivo ? " ativo" : ""}${m.id === melhor ? " melhor" : ""}">
+    <th scope="col" class="mc-col${m.id === ativo ? " ativo" : ""}${m.id === melhor ? " melhor" : ""}">
       <span class="mc-col-topo">
         <img class="mc-logo" src="${esc(m.logo)}" alt="" onerror="this.remove()">
         <b>${esc(m.nome)}</b>
       </span>
       ${m.id === melhor ? `<span class="mc-selo">melhor opção</span>` : ""}
-      <button type="button" class="mc-escolher${eAtivo ? " atual" : ""}" data-escolher-mercado="${esc(m.id)}">
-        ${eAtivo ? '<i class="fa-solid fa-check" aria-hidden="true"></i> Escolhido' : "Escolher"}
-      </button>
     </th>`;
 }
 
-/** Uma célula da tabela: o custo, ou o aviso amarelo/vermelho. */
-function celulaMercado(c, melhor) {
+/**
+ * Uma célula da tabela: o custo, o produto e a embalagem — ou o aviso.
+ *
+ * Clicar numa célula com preço abre os produtos daquele ingrediente vendidos
+ * NAQUELE mercado (requisito 4).
+ */
+function celulaMercado(c, ingId, mercadoId, melhor) {
   const classe = `mc-cel${c.estado ? ` ${c.estado}` : ""}${melhor ? " melhor" : ""}`;
 
   if (c.valor != null) {
-    const emb = c.embalagens != null
-      ? `<small>${c.embalagens} ${c.embalagens === 1 ? "emb." : "embs."}</small>` : "";
     const aviso = c.estado === "alerta"
-      ? `<i class="fa-solid fa-triangle-exclamation mc-icone" title="${esc(c.motivo)}" aria-hidden="true"></i> ` : "";
-    const titulo = c.produto ? `${c.produto.nome}${c.produto.marca ? ` (${c.produto.marca})` : ""}` : "";
-    return `<td class="${classe}" title="${esc([titulo, c.motivo].filter(Boolean).join(" — "))}">
-              ${aviso}<b>${esc(textoCusto(c.valor))}</b>${emb}
-            </td>`;
+      ? `<i class="fa-solid fa-triangle-exclamation mc-icone" aria-hidden="true"></i> ` : "";
+    const nome = c.produto
+      ? `<small class="mc-cel-nome">${esc(c.produto.nome)}${c.produto.marca ? ` · ${esc(c.produto.marca)}` : ""}</small>` : "";
+    const medida = c.produto
+      ? `<small class="mc-cel-emb">${c.embalagens > 1 ? `${c.embalagens} × ` : ""}${esc(textoEmbalagem(c.produto))}</small>` : "";
+
+    return `<td class="${classe}">
+      <button type="button" class="mc-cel-btn" data-cel-produtos="${esc(ingId)}" data-cel-mercado="${esc(mercadoId)}"
+              title="${esc([c.motivo, "ver produtos deste ingrediente neste mercado"].filter(Boolean).join(" — "))}">
+        ${aviso}<b>${esc(textoCusto(c.valor))}</b>${nome}${medida}
+      </button>
+    </td>`;
   }
 
   const icone = c.estado === "errada" ? "fa-ban" : "fa-triangle-exclamation";
@@ -496,19 +505,30 @@ function celulaMercado(c, melhor) {
           </td>`;
 }
 
+/** O botão de escolher um mercado — no rodapé, abaixo do total. */
+function escolherMercadoBtn(m, ativo) {
+  const eAtivo = m.id === ativo;
+  return `<button type="button" class="mc-escolher${eAtivo ? " atual" : ""}" data-escolher-mercado="${esc(m.id)}">
+    ${eAtivo ? '<i class="fa-solid fa-check" aria-hidden="true"></i> Escolhido' : "Escolher este mercado"}
+  </button>`;
+}
+
 function mercadoHTML(comp, ativo) {
   const { mercados, linhas, matriz, totais, melhor } = comp;
 
   const corpo = linhas.map(l => {
     const contexto = [textoPrecisa(l.precisa), l.escolhidoNome].filter(Boolean).join(" · ");
     const celulas = mercados
-      .map(m => celulaMercado(matriz.get(l.chave).get(m.id), m.id === melhor))
+      .map(m => celulaMercado(matriz.get(l.chave).get(m.id), l.ing.id, m.id, m.id === melhor))
       .join("");
     return `
       <tr>
         <th scope="row" class="mc-ing">
-          ${esc(l.ing.nome)}
-          <small>${esc(contexto)}</small>
+          <button type="button" class="mc-ing-btn" data-ing-produtos="${esc(l.ing.id)}"
+                  title="Escolher o produto deste ingrediente">
+            <span class="mc-ing-nome">${esc(l.ing.nome)}</span>
+            <small>${esc(contexto)}</small>
+          </button>
         </th>
         ${celulas}
       </tr>`;
@@ -522,11 +542,16 @@ function mercadoHTML(comp, ativo) {
     </td>`;
   }).join("");
 
+  const acoesRow = mercados
+    .map(m => `<td class="mc-acao${m.id === melhor ? " melhor" : ""}">${escolherMercadoBtn(m, ativo)}</td>`)
+    .join("");
+
   return `
     <p class="compra-dica">
       Cada preço é o mais barato para a quantidade que a compra precisa, em
-      embalagens inteiras. Onde você escolheu um produto, é o preço dele.
-      Escolha um mercado para seguir para a compra.
+      embalagens inteiras. Onde você fixou um produto, é o preço dele. Clique no
+      ingrediente para trocar o produto, num preço para ver os produtos daquele
+      mercado, e escolha um mercado no rodapé para seguir para a compra.
     </p>
 
     <div class="mc-wrap">
@@ -543,17 +568,80 @@ function mercadoHTML(comp, ativo) {
             <th scope="row">Total estimado</th>
             ${totalRow}
           </tr>
+          <tr class="mc-acoes">
+            <td></td>
+            ${acoesRow}
+          </tr>
         </tfoot>
       </table>
     </div>
 
     <p class="compra-nota">
       <i class="fa-solid fa-triangle-exclamation nota-amarela" aria-hidden="true"></i>
-      amarelo: o produto escolhido não é vendido ali — o preço é do mais barato que serve.
+      amarelo: o produto que você fixou não é vendido ali — o preço é do mais barato que serve.
       <i class="fa-solid fa-ban nota-vermelha" aria-hidden="true"></i>
       vermelho: o mercado não vende nenhum produto para o ingrediente, e o total vira um piso.
       Preços fictícios, para teste.
     </p>`;
+}
+
+/**
+ * A janela de produtos de um ingrediente para o comparativo.
+ *
+ * Com `mercadoId`: só os vendidos ali, com o preço dali (requisito 4). Sem ele:
+ * todos os produtos, com um selo por mercado que o vende e o preço em cada
+ * (requisito 3). Clicar num produto o fixa na compra; "deixar o site escolher"
+ * volta ao genérico.
+ */
+function produtosDialogoHTML(ing, mercadoId, escolhidoId) {
+  const lista = produtosDe(ing.id, mercadoId);
+  const nomeMercado = mercadoId ? (mercadoPorId(mercadoId)?.nome ?? "") : null;
+
+  const item = p => {
+    const ondes = mercadoId ? [mercadoId] : mercadosDe(p.id);
+    const badges = ondes.map(mid =>
+      `<span class="mcp-badge">${esc(mercadoPorId(mid)?.nome ?? mid)} <b>${esc(formatarPreco(preco(mid, p.id)))}</b></span>`
+    ).join("");
+
+    return `
+      <button type="button" class="mcp-item${p.id === escolhidoId ? " marcada" : ""}" data-lock="${esc(p.id)}">
+        <span class="mcp-info">
+          <span class="mcp-nome">${esc(p.nome)}${p.marca ? ` <em>· ${esc(p.marca)}</em>` : ""}</span>
+          <span class="mcp-emb">${esc(textoEmbalagem(p))}</span>
+        </span>
+        <span class="mcp-precos">${badges || '<span class="mcp-badge">sem preço</span>'}</span>
+      </button>`;
+  };
+
+  return `
+    <div class="pref-form">
+      <header class="pref-head">
+        <h2>${esc(ing.nome)}${nomeMercado ? ` · ${esc(nomeMercado)}` : ""}</h2>
+        <button type="button" class="pref-fechar" aria-label="Fechar"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+      </header>
+
+      <p class="pref-ajuda">${mercadoId
+        ? `Produtos de ${esc(ing.nome)} vendidos no ${esc(nomeMercado)}. Clique para fixar um na compra.`
+        : `Todos os produtos de ${esc(ing.nome)} e onde são vendidos. Fixe um e o comparativo passa a mostrar o preço dele em cada mercado.`}
+      </p>
+
+      ${lista.length ? "" : `<p class="prod-fora prod-vazia">Nenhum produto${nomeMercado ? ` vendido no ${esc(nomeMercado)}` : ""} para ${esc(ing.nome)}.</p>`}
+
+      <div class="mcp-lista">
+        <button type="button" class="mcp-item mcp-generico${escolhidoId ? "" : " marcada"}" data-lock="">
+          <span class="mcp-info">
+            <span class="mcp-nome">Deixar o site escolher</span>
+            <span class="mcp-emb">o mais barato por embalagem em cada mercado</span>
+          </span>
+        </button>
+        ${lista.map(item).join("")}
+      </div>
+
+      <footer class="pref-foot">
+        <span></span>
+        <button type="button" class="pref-ok">Pronto</button>
+      </footer>
+    </div>`;
 }
 
 /** O bloco no alto da janela do passo 2: quem pede este ingrediente, e quanto. */
@@ -781,9 +869,41 @@ export function renderizarCarrinho(alvo, { passo = 1 } = {}) {
     if (window.location.hash !== "#/carrinho?passo=3") window.location.hash = "#/carrinho?passo=3";
   }
 
+  /* Janela de produtos do comparativo: abre pelo nome do ingrediente (todos os
+     produtos, com os mercados que vendem) ou por uma célula de preço (só os do
+     mercado clicado). Fixar um produto o grava no escopo do carrinho e redesenha. */
+  const dlgProdutos = document.getElementById("mercado-produtos");
+  let ctxProdutos = null;
+
+  function abrirProdutos(ingId, mercadoId = null) {
+    const ing = { id: ingId, ...ingrediente(ingId) };
+    if (!ing.nome) return;
+
+    ctxProdutos = { ingId };
+    const escolhidoId = carregarEscolhas()[ESCOPO_CARRINHO]?.[ingId] ?? null;
+    dlgProdutos.innerHTML = produtosDialogoHTML(ing, mercadoId, escolhidoId);
+    abrirDialogo(dlgProdutos);
+  }
+
+  dlgProdutos.addEventListener("click", e => {
+    const item = e.target.closest("[data-lock]");
+    if (!item || !ctxProdutos) return;
+    gravarEscolha(ESCOPO_CARRINHO, ctxProdutos.ingId, item.dataset.lock || null);
+    fecharDialogo(dlgProdutos);
+    desenhar();
+  }, { signal: vida.signal });
+
+  ligarFechamento(dlgProdutos, ".pref-fechar, .pref-ok", { signal: vida.signal });
+
   const aoClicar = e => {
     const escMerc = e.target.closest("[data-escolher-mercado]");
     if (escMerc) { escolherMercado(escMerc.dataset.escolherMercado); return; }
+
+    const ingBtn = e.target.closest("[data-ing-produtos]");
+    if (ingBtn) { abrirProdutos(ingBtn.dataset.ingProdutos, null); return; }
+
+    const celBtn = e.target.closest("[data-cel-produtos]");
+    if (celBtn) { abrirProdutos(celBtn.dataset.celProdutos, celBtn.dataset.celMercado); return; }
 
     const stepper = e.target.closest(".pbtn");
     if (stepper && !stepper.disabled) {

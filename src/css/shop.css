@@ -374,6 +374,76 @@ button.compra-item { cursor: pointer; }
   color: var(--vermelho);
 }
 
+/* Rodapé com os botões de escolher (abaixo do total) */
+.mc-acoes td { border-top: none; text-align: center; padding: 6px 10px 14px; }
+.mc-acao.melhor { background: var(--wash-verde); }
+
+/* Nome do ingrediente: clicável, abre os produtos */
+.mc-ing-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+}
+.mc-ing-nome { font-weight: 600; color: var(--verde-escuro); }
+.mc-ing-btn:hover .mc-ing-nome { text-decoration: underline; text-underline-offset: 3px; }
+.mc-ing-btn small { color: var(--ink-faint); font-size: .76rem; }
+
+/* Célula de preço: clicável, abre os produtos daquele mercado */
+.mc-cel-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+}
+.mc-cel-btn:hover b { text-decoration: underline; text-underline-offset: 3px; }
+.mc-cel-nome { font-weight: 500; color: var(--ink-soft); font-size: .74rem; line-height: 1.25; }
+.mc-cel-emb { color: var(--ink-faint); font-size: .7rem; }
+
+/* Janela de produtos do comparativo */
+.mcp-lista { display: flex; flex-direction: column; gap: 8px; margin: 6px 0 4px; }
+.mcp-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  transition: border-color .15s var(--ease), background .15s var(--ease);
+}
+.mcp-item:hover { border-color: var(--verde-fresco); background: var(--paper-2); }
+.mcp-item.marcada { border-color: var(--verde-escuro); background: var(--wash-verde); box-shadow: 0 0 0 1px var(--verde-escuro) inset; }
+.mcp-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.mcp-nome { font-weight: 600; color: var(--ink); }
+.mcp-nome em { font-style: normal; color: var(--ink-faint); font-weight: 500; }
+.mcp-emb { font-size: .8rem; color: var(--ink-soft); }
+.mcp-precos { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.mcp-badge {
+  font-size: .76rem;
+  background: var(--chip);
+  color: var(--ink-body);
+  border-radius: var(--radius-pill);
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+.mcp-badge b { color: var(--verde-escuro); }
+.mcp-generico .mcp-nome { color: var(--verde-escuro); }
+
 /* ===================================================== folha de compras ==== */
 
 .lista-area { max-width: 780px; }
