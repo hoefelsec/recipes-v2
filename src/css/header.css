@@ -203,7 +203,7 @@
   transition: background .15s var(--ease);
 }
 .btn-prefs:hover { background: var(--hover); }
-.btn-prefs span[aria-hidden] { font-size: 1.05rem; line-height: 1; }
+.btn-prefs svg { width: 18px; height: 18px; flex: none; }
 
 /* ------------------------------------------------------------ barra de abas (celular) */
 
