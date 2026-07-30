@@ -108,7 +108,7 @@ export const ARVORE = {
   /* -------------------------------------------------------------- carnes */
 
   "carne-seca": {
-    nome: "carne-seca",
+    nome: "carne seca",
     nutrientes: { kcal: 313, proteina: 27, carboidrato: 0, gordura: 22, fibra: 0, sodio: 1800 }
   },
   "costelinha-de-porco": {
@@ -228,7 +228,7 @@ export const ARVORE = {
     nutrientes: { kcal: 0, proteina: 0, carboidrato: 0, gordura: 0, fibra: 0, sodio: 38758 }
   },
   "pimenta-do-reino": {
-    nome: "pimenta-do-reino",
+    nome: "pimenta do reino",
     densidade: 0.5,
     nutrientes: { kcal: 251, proteina: 10.4, carboidrato: 64, gordura: 3.3, fibra: 25.3, sodio: 20 }
   },
