@@ -9,8 +9,12 @@ article { display: block; }
   position: relative;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  aspect-ratio: 16 / 8;
-  max-height: 380px;
+  /* Largura total da coluna com altura fixa e responsiva. Nada de
+     `aspect-ratio` + `max-height` juntos: quando a altura bate no teto, o
+     `aspect-ratio` encolhe a LARGURA para manter a proporção, e o banner
+     deixava de cobrir a coluna. */
+  width: 100%;
+  height: clamp(300px, 34vw, 460px);
   box-shadow: var(--shadow-md);
   margin-bottom: 20px;
 }

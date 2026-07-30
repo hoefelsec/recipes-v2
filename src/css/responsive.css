@@ -100,7 +100,7 @@
   .vitrine { grid-template-columns: minmax(0, 1fr); }
   .custo { grid-template-columns: 1fr; }
   .area-head h1 { font-size: 1.55rem; }
-  .hero { aspect-ratio: 3 / 2; }
+  .hero { height: clamp(220px, 52vw, 320px); }
   .compra-total { grid-template-columns: 1fr 1fr; }
 }
 
