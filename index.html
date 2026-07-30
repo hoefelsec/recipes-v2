@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chef — Receitas e lista de compras</title>
+<meta name="description" content="Chef: receitas que se ajustam às porções, preço estimado por prato e lista de compras somada, pronta para o mercado.">
+<meta name="theme-color" content="#2E7D32">
+
+<link rel="icon" href="public/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="src/css/tokens.css">
+<link rel="stylesheet" href="src/css/base.css">
+<link rel="stylesheet" href="src/css/header.css">
+<link rel="stylesheet" href="src/css/recipe.css">
+<link rel="stylesheet" href="src/css/settings.css">
+<link rel="stylesheet" href="src/css/shop.css">
+<link rel="stylesheet" href="src/css/responsive.css">
+<link rel="stylesheet" href="src/css/print.css" media="print">
+</head>
+<body>
+
+<a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
+
+<!-- Menu lateral (desktop): marca + navegação. No celular ele some e a navegação
+     vai para a barra de abas inferior. -->
+<aside class="sidebar">
+  <a class="side-brand" href="#/comprar" aria-label="Chef — página inicial">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M7 14a4 4 0 0 1-1-7.9A4.5 4.5 0 0 1 14.5 4 4 4 0 0 1 18 6.1 4 4 0 0 1 17 14"/>
+      <path d="M6.5 14h11v5a1.5 1.5 0 0 1-1.5 1.5H8A1.5 1.5 0 0 1 6.5 19z"/>
+      <path d="M10 14v3M13 14v3"/>
+    </svg>
+    <span>Chef</span>
+  </a>
+
+  <nav class="side-nav" aria-label="Seções">
+    <a class="side-link area-link" data-area="comprar" href="#/comprar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9.5 20v-6h5v6"/></svg>
+      <span>Início</span>
+    </a>
+    <a class="side-link area-link area-link-cart" data-area="carrinho" href="#/carrinho">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5h2.2l2.3 10.8a1.6 1.6 0 0 0 1.6 1.2h8.1a1.6 1.6 0 0 0 1.6-1.2L20.6 8H6"/><circle cx="9.5" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/></svg>
+      <span>Carrinho</span>
+      <span class="cart-badge" hidden>0</span>
+    </a>
+    <a class="side-link area-link" data-area="lista" href="#/lista">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9z"/><path d="M9 12h6M9 16h4"/></svg>
+      <span>Listas de compras</span>
+    </a>
+    <button type="button" class="side-link" data-focar-mercado>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16l-1 5H5z"/><path d="M5 9v11h14V9"/><path d="M9.5 20v-6h5v6"/></svg>
+      <span>Mercados</span>
+    </button>
+  </nav>
+
+  <hr class="side-sep">
+
+  <div class="side-foot">
+    <button type="button" class="side-link" data-abrir-prefs>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2-1.5-2-3.4-2.4.9a7.6 7.6 0 0 0-1.7-1L15 2.6h-4l-.3 2.4a7.6 7.6 0 0 0-1.7 1L6.6 5.1l-2 3.4L6.6 10a7.6 7.6 0 0 0 0 2l-2 1.5 2 3.4 2.4-.9a7.6 7.6 0 0 0 1.7 1l.3 2.4h4l.3-2.4a7.6 7.6 0 0 0 1.7-1l2.4.9 2-3.4z"/></svg>
+      <span>Configurações</span>
+    </button>
+    <button type="button" class="side-link" data-abrir-ajuda>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.5 2.5 0 0 1 4.6 1.3c0 1.7-2.2 2-2.2 3.5"/><path d="M12 17.2h.01"/></svg>
+      <span>Ajuda</span>
+    </button>
+  </div>
+</aside>
+
+<div class="app-main">
+  <!-- Barra superior: no celular traz a marca; em toda largura, a busca e o
+       seletor de mercado (montado pelo JS em #mercado-topo). -->
+  <header class="topbar">
+    <a class="brand-mark" href="#/comprar" aria-label="Chef">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M7 14a4 4 0 0 1-1-7.9A4.5 4.5 0 0 1 14.5 4 4 4 0 0 1 18 6.1 4 4 0 0 1 17 14"/>
+        <path d="M6.5 14h11v5a1.5 1.5 0 0 1-1.5 1.5H8A1.5 1.5 0 0 1 6.5 19z"/>
+      </svg>
+      <span>Chef</span>
+    </a>
+
+    <div class="busca">
+      <label class="sr-only" for="busca">Buscar receita</label>
+      <input id="busca" type="search" placeholder="Buscar receitas, ingredientes…" autocomplete="off" spellcheck="false">
+    </div>
+
+    <div class="topbar-acoes">
+      <!-- O seletor de mercado é montado aqui pelo JS: depende do cadastro de
+           mercados e da preferência guardada. -->
+      <div id="mercado-topo"></div>
+
+      <button type="button" id="abrir-prefs" class="btn-prefs" title="Preferências">
+        <span aria-hidden="true">⚙</span> <span class="btn-prefs-texto">Preferências</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="conteudo" tabindex="-1"></main>
+</div>
+
+<!-- Barra de abas (celular): a navegação principal quando não há menu lateral. -->
+<nav class="tabbar" aria-label="Navegação">
+  <a class="tab-link area-link" data-area="comprar" href="#/comprar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9.5 20v-6h5v6"/></svg>
+    <span>Início</span>
+  </a>
+  <a class="tab-link area-link" data-area="carrinho" href="#/carrinho">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5h2.2l2.3 10.8a1.6 1.6 0 0 0 1.6 1.2h8.1a1.6 1.6 0 0 0 1.6-1.2L20.6 8H6"/><circle cx="9.5" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/></svg>
+    <span>Carrinho</span>
+    <span class="cart-badge" hidden>0</span>
+  </a>
+  <a class="tab-link area-link" data-area="lista" href="#/lista">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9z"/><path d="M9 12h6M9 16h4"/></svg>
+    <span>Lista</span>
+  </a>
+  <button type="button" class="tab-link" data-abrir-prefs>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2-1.5-2-3.4-2.4.9a7.6 7.6 0 0 0-1.7-1L15 2.6h-4l-.3 2.4a7.6 7.6 0 0 0-1.7 1L6.6 5.1l-2 3.4L6.6 10a7.6 7.6 0 0 0 0 2l-2 1.5 2 3.4 2.4-.9a7.6 7.6 0 0 0 1.7 1l.3 2.4h4l.3-2.4a7.6 7.6 0 0 0 1.7-1l2.4.9 2-3.4z"/></svg>
+    <span>Ajustes</span>
+  </button>
+</nav>
+
+<dialog id="prefs" aria-label="Preferências"></dialog>
+<dialog id="nutri-detalhes" aria-label="Detalhes dos nutrientes"></dialog>
+<dialog id="produtos" aria-label="Escolher o produto"></dialog>
+<dialog id="ajuda" aria-label="Ajuda">
+  <div class="pref-form">
+    <header class="pref-head">
+      <h2>Sobre o Chef</h2>
+      <button type="button" class="pref-fechar" aria-label="Fechar">✕</button>
+    </header>
+    <p class="pref-ajuda">
+      O <strong>Chef</strong> é um caderno de receitas que também monta a lista de compras.
+      Cada receita ajusta as quantidades ao número de porções, estima o preço por prato
+      e soma tudo numa folha de mercado no fim.
+    </p>
+    <ul class="ajuda-lista">
+      <li><b>Início</b> — as receitas. Escolha as porções e adicione ao carrinho.</li>
+      <li><b>Carrinho</b> — revise as receitas, depois a compra (embalagens inteiras e sobra).</li>
+      <li><b>Listas de compras</b> — a folha final, pronta para imprimir ou salvar em PDF.</li>
+      <li><b>Mercados</b> — escolha onde comprar: os preços e produtos passam a ser os de lá.</li>
+      <li><b>Configurações</b> — unidades de medida, consumo diário e distribuição de macros.</li>
+    </ul>
+    <p class="pref-nota">Preços e marcas são fictícios, para demonstração.</p>
+    <footer class="pref-foot">
+      <span></span>
+      <button type="button" class="pref-ok">Entendi</button>
+    </footer>
+  </div>
+</dialog>
+
+<script type="module" src="src/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+/* Impressão: uma receita por folha, sem menu, sem sombras.
+   Útil para pregar a receita na porta do armário. */
+
+.sidebar, .topbar, .tabbar, .skip-link, .credito, .filtros-caixa,
+#prefs, #nutri-detalhes, #produtos, #ajuda, .conv-menu, .ing-dica, .nutri-mais { display: none !important; }
+
+/* Sem menu lateral, o conteúdo ocupa a folha inteira */
+body { display: block !important; }
+main#conteudo { max-width: none !important; padding: 0 !important; }
+
+/* No papel a medida não é clicável: vira texto comum */
+.qty.conv { border-bottom: 0 !important; color: #000 !important; }
+.qty.conv.trocada::after { display: none; }
+
+/* No papel não há faixa de filtros à esquerda, e o `<main>` não abre espaço para ela */
+main { margin-left: 0 !important; margin-top: 0 !important; padding-left: 0 !important; }
+
+body { background: #fff; color: #000; font-size: 11pt; }
+
+.hero { height: 190px; break-inside: avoid; }
+.hero::after { display: none; }
+.hero-txt { position: static; padding: 14px 0 0; }
+.hero-txt h1 { color: #000; font-size: 24pt; text-shadow: none; }
+.hero-txt .resumo { color: #333; text-shadow: none; }
+.eyebrow { color: #000; border-color: #999; background: none; backdrop-filter: none; }
+
+.meta { padding: 10px 0; border-top: 1px solid #ccc; break-inside: avoid; }
+.meta > div { border-color: #ccc; }
+
+/* Impresso, o seletor não serve para nada: fica só o número escolhido */
+.pbtn { display: none !important; }
+.porcoes { border: 0; background: none; }
+.pval { border: 0; padding: 0; min-width: 0; text-align: left; }
+.escala-aviso { color: #333; border-color: #ccc; }
+.ing .nota { color: #555; }
+
+.wrap {
+  display: block;
+  padding: 0;
+  max-width: none;
+}
+.col-left { display: block; }
+.card {
+  box-shadow: none;
+  border: 1px solid #ccc;
+  break-inside: avoid;
+  margin-bottom: 14px;
+}
+.steps li { break-inside: avoid; }
+.steps li::before { box-shadow: none; border-color: #999; color: #000; }
+.tip { background: none; border-left: 2px solid #999; color: #333; }
+
+@page { margin: 14mm; }
+
+/* --------------------------------------------- lista de compras impressa */
+
+.topbar-cart, .areas, .lista-acoes, .btn-add, .btn-primario, .btn-texto,
+.cart-rodape, .cart-remover, .avisos { display: none !important; }
+
+.area { padding: 0 !important; max-width: none !important; }
+
+.eyebrow-escuro { color: #000; font-size: 9pt; }
+.area-head h1 { font-size: 26pt; }
+.area-sub { color: #333; font-size: 10pt; }
+
+.lista-resumo h2, .lista-itens h2 { color: #000; border-color: #999; font-size: 9pt; }
+.lista-resumo li, .lista-itens li { break-inside: avoid; border-color: #ddd; }
+.lista-qtd { color: #000; }
+.lista-nome > em { color: #555; }
+
+/* Quadradinho para marcar no mercado */
+.marca { border-color: #666; }
+
+/* A folha impressa: caixa maior, para caber a caneta */
+.folha li { break-inside: avoid; border-color: #ddd; padding: 7pt 0; }
+.folha-nome { font-size: 11pt; }
+.folha-marca { color: #555; }
+.folha-qtd { color: #000; font-size: 10pt; }
+.lista-tenho { opacity: 1; border-top: 1px solid #999; padding-top: 8pt; }
+
+.lista-produto { color: #333; font-size: 9pt; }
+.lista-produto b { color: #000; }
+.lista-marca { color: #666; }
+
+/* Os totais impressos: sem cor de fundo, mas o da compra continua em destaque */
+.lista-total { break-inside: avoid; margin-top: 16pt; }
+.lista-total > div { border-color: #bbb; padding: 8pt 10pt; }
+.lista-total-forte { background: none !important; border-color: #000 !important; }
+.lista-total dt { color: #333; font-size: 8pt; }
+.lista-total dd { color: #000; font-size: 15pt; }
+
+.lista-nota { background: none; border: 1px solid #ccc; color: #333; font-size: 9pt; }
+
+/* Duas colunas quando a lista é longa — economiza papel */
+@media print and (min-width: 0) {
+  .lista-itens ul { columns: 2; column-gap: 26px; }
+  .passos, .lista-acoes { display: none !important; }
+  .lista-itens li { break-inside: avoid; }
+}

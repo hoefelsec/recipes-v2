@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conceito A — Receitas</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF7F0; --paper:#FFFDF9; --ink:#2C2622; --ink-soft:#6B5F56;
+    --terracotta:#C4623F; --terracotta-dk:#A34F31; --olive:#7A7F52;
+    --line:#E7DED0; --shadow:0 1px 2px rgba(44,38,34,.05),0 8px 24px rgba(44,38,34,.06);
+    --sidebar:288px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--cream);color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,.serif{font-family:Fraunces,Georgia,serif}
+
+  /* ---------- SIDEBAR ---------- */
+  aside{
+    position:fixed;inset:0 auto 0 0;width:var(--sidebar);background:var(--paper);
+    border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:20;
+  }
+  .brand{padding:30px 26px 22px;border-bottom:1px solid var(--line)}
+  .brand-mark{font-family:Fraunces;font-size:25px;font-weight:600;letter-spacing:-.02em;line-height:1.1}
+  .brand-mark em{color:var(--terracotta);font-style:normal}
+  .brand-sub{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);margin-top:8px}
+  .search{padding:18px 20px 6px}
+  .search input{
+    width:100%;padding:10px 13px;border:1px solid var(--line);border-radius:9px;
+    background:#fff;font:inherit;font-size:13.5px;color:var(--ink);outline:none;
+  }
+  .search input:focus{border-color:var(--terracotta)}
+  .search input::placeholder{color:#B3A697}
+  nav{flex:1;overflow-y:auto;padding:14px 14px 28px}
+  .group{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#A8998A;padding:16px 12px 8px;font-weight:600}
+  .item{
+    display:block;width:100%;text-align:left;border:0;background:none;cursor:pointer;
+    font:inherit;font-size:14.5px;color:var(--ink);padding:9px 12px;border-radius:8px;
+    position:relative;transition:background .13s,color .13s;
+  }
+  .item:hover{background:#F4EDE2}
+  .item.active{background:#F6E7DF;color:var(--terracotta-dk);font-weight:600}
+  .item.active::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:19px;border-radius:2px;background:var(--terracotta)}
+  .item small{display:block;font-size:11.5px;color:var(--ink-soft);font-weight:400;margin-top:2px}
+  .item.active small{color:#B87A5E}
+
+  /* ---------- MAIN ---------- */
+  main{margin-left:var(--sidebar)}
+  .hero{position:relative;height:min(46vh,400px);overflow:hidden;background:linear-gradient(135deg,#D9A57F,#B9714A)}
+  .hero img{width:100%;height:100%;object-fit:cover;display:block}
+  .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05) 0%,rgba(0,0,0,0) 40%,rgba(30,20,14,.72) 100%)}
+  .hero-txt{position:absolute;left:0;right:0;bottom:0;padding:0 56px 34px;z-index:2}
+  .eyebrow{
+    display:inline-block;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+    color:#fff;background:rgba(255,255,255,.16);backdrop-filter:blur(6px);
+    border:1px solid rgba(255,255,255,.28);padding:5px 11px;border-radius:100px;margin-bottom:14px;
+  }
+  .hero-txt h1{color:#fff;font-size:clamp(32px,4vw,50px);font-weight:600;letter-spacing:-.02em;line-height:1.05;text-shadow:0 2px 18px rgba(0,0,0,.3)}
+  .hero-txt p{color:rgba(255,255,255,.9);font-size:15.5px;margin-top:11px;max-width:56ch;text-shadow:0 1px 10px rgba(0,0,0,.35)}
+
+  /* meta strip */
+  .meta{
+    display:flex;gap:0;background:var(--paper);border-bottom:1px solid var(--line);
+    padding:0 56px;
+  }
+  .meta div{padding:20px 34px 20px 0;margin-right:34px;border-right:1px solid var(--line)}
+  .meta div:last-child{border:0}
+  .meta dt{font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;color:#A8998A;font-weight:600}
+  .meta dd{font-family:Fraunces;font-size:20px;font-weight:600;margin-top:5px;letter-spacing:-.01em}
+  .meta dd span{font-family:Inter;font-size:12.5px;font-weight:400;color:var(--ink-soft)}
+
+  /* content grid */
+  .wrap{display:grid;grid-template-columns:335px 1fr;gap:56px;padding:46px 56px 90px;max-width:1240px}
+  .col-left{position:sticky;top:32px;align-self:start;display:flex;flex-direction:column;gap:22px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:24px 24px 26px;box-shadow:var(--shadow)}
+  .card h2{font-size:19px;font-weight:600;letter-spacing:-.01em;display:flex;align-items:center;gap:9px;margin-bottom:16px}
+  .card h2::after{content:"";flex:1;height:1px;background:var(--line)}
+  .ing{list-style:none}
+  .ing li{display:flex;gap:11px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:14.5px;line-height:1.5}
+  .ing li:last-child{border:0}
+  .qty{font-variant-numeric:tabular-nums;font-weight:600;color:var(--terracotta-dk);min-width:74px;flex-shrink:0;font-size:14px}
+  .ut{list-style:none;display:flex;flex-wrap:wrap;gap:7px}
+  .ut li{font-size:13px;background:#F4EFE6;border:1px solid var(--line);border-radius:100px;padding:6px 12px;color:var(--ink-soft)}
+
+  h2.section{font-size:27px;font-weight:600;letter-spacing:-.02em;margin-bottom:6px}
+  .section-note{color:var(--ink-soft);font-size:14px;margin-bottom:28px}
+  ol.steps{list-style:none;counter-reset:s}
+  ol.steps li{counter-increment:s;position:relative;padding:0 0 26px 62px;margin-bottom:0}
+  ol.steps li::before{
+    content:counter(s);position:absolute;left:0;top:-3px;width:40px;height:40px;border-radius:50%;
+    background:var(--paper);border:1px solid var(--line);color:var(--terracotta);
+    font-family:Fraunces;font-weight:600;font-size:17px;display:grid;place-items:center;box-shadow:var(--shadow);
+  }
+  ol.steps li:not(:last-child)::after{
+    content:"";position:absolute;left:20px;top:44px;bottom:6px;width:1px;background:var(--line);
+  }
+  ol.steps h3{font-size:16px;font-weight:600;font-family:Inter;margin-bottom:5px;letter-spacing:-.005em}
+  ol.steps p{font-size:15px;line-height:1.68;color:#4A4038}
+  .tip{
+    margin-top:12px;background:#F7F4E9;border-left:3px solid var(--olive);border-radius:0 9px 9px 0;
+    padding:12px 16px;font-size:13.5px;line-height:1.6;color:#5C5A3C;
+  }
+  .tip b{color:var(--olive)}
+
+  /* ---------- MOBILE TOPBAR / DRAWER ---------- */
+  .topbar{
+    display:none;position:sticky;top:0;z-index:30;background:rgba(255,253,249,.92);
+    backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line);
+    align-items:center;gap:12px;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top));
+  }
+  .burger{
+    width:44px;height:44px;flex-shrink:0;border:1px solid var(--line);border-radius:11px;
+    background:#fff;display:grid;place-items:center;gap:4px;cursor:pointer;padding:0;
+  }
+  .burger i{display:block;width:17px;height:1.5px;background:var(--ink);border-radius:2px}
+  .topbar-title{
+    font-family:Fraunces;font-size:16px;font-weight:600;letter-spacing:-.01em;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .topbar-title small{display:block;font-family:Inter;font-size:10.5px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+  .scrim{
+    display:none;position:fixed;inset:0;z-index:25;background:rgba(30,22,16,.42);
+    opacity:0;transition:opacity .22s;
+  }
+  body.nav-open .scrim{display:block;opacity:1}
+
+  @media(max-width:1080px){
+    .wrap{grid-template-columns:1fr;gap:30px;padding:34px 30px 80px}
+    .col-left{position:static}
+    .hero-txt,.meta{padding-left:30px;padding-right:30px}
+    .meta{flex-wrap:wrap}
+    .meta div{padding-right:26px;margin-right:26px}
+  }
+
+  @media(max-width:860px){
+    .topbar{display:flex}
+    aside{
+      transform:translateX(-100%);transition:transform .26s cubic-bezier(.32,.72,0,1);
+      width:min(84vw,318px);box-shadow:0 0 40px rgba(30,22,16,.18);
+    }
+    body.nav-open aside{transform:none}
+    main{margin-left:0}
+
+    .hero{height:min(38vh,290px)}
+    .hero-txt{padding:0 20px 22px}
+    .hero-txt h1{font-size:clamp(26px,7.5vw,36px)}
+    .hero-txt p{font-size:14.5px;margin-top:8px}
+    .eyebrow{margin-bottom:11px}
+
+    /* meta strip -> 2x2 grid, no dangling dividers */
+    .meta{display:grid;grid-template-columns:1fr 1fr;padding:0 20px;gap:0}
+    .meta div{
+      padding:15px 0;margin:0;border:0;border-bottom:1px solid var(--line);
+    }
+    .meta div:nth-child(odd){border-right:1px solid var(--line);padding-right:16px}
+    .meta div:nth-child(even){padding-left:16px}
+    .meta div:nth-last-child(-n+2){border-bottom:0}
+    .meta dd{font-size:18px}
+
+    .wrap{padding:28px 20px 80px;gap:26px}
+    .card{padding:20px 18px 22px;border-radius:13px}
+    .card h2{font-size:18px}
+    .ing li{font-size:15px;padding:11px 0}
+    .qty{min-width:68px}
+    .ut li{font-size:13.5px;padding:8px 13px}   /* larger tap area */
+
+    h2.section{font-size:23px}
+    .section-note{margin-bottom:22px}
+    ol.steps li{padding:0 0 24px 48px}
+    ol.steps li::before{width:33px;height:33px;font-size:15px}
+    ol.steps li:not(:last-child)::after{left:16px;top:37px}
+    ol.steps p{font-size:15.5px;line-height:1.7}
+    .tip{font-size:14px;padding:12px 14px}
+  }
+
+  @media(max-width:420px){
+    .meta{grid-template-columns:1fr}
+    .meta div,.meta div:nth-child(odd),.meta div:nth-child(even){
+      border-right:0;padding:13px 0;border-bottom:1px solid var(--line)
+    }
+    .meta div:last-child{border-bottom:0}
+    .ing li{flex-direction:column;gap:1px}
+    .qty{min-width:0}
+  }
+
+  /* respeita o "reduzir movimento" do sistema */
+  @media(prefers-reduced-motion:reduce){ *{transition:none!important;scroll-behavior:auto!important} }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <button class="burger" aria-label="Abrir menu de receitas" aria-expanded="false" onclick="toggleNav()">
+    <i></i><i></i><i></i>
+  </button>
+  <div class="topbar-title" id="topbarTitle"><small>Caderno de Receitas</small></div>
+</header>
+<div class="scrim" onclick="toggleNav(false)"></div>
+
+<aside>
+  <div class="brand">
+    <div class="brand-mark">Caderno de <em>Receitas</em></div>
+    <div class="brand-sub">Conceito A</div>
+  </div>
+  <div class="search"><input placeholder="Buscar receita…" oninput="filtrar(this.value)"></div>
+  <nav id="nav"></nav>
+</aside>
+
+<main id="main"></main>
+
+<script>
+const FALLBACK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='600'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23D9A57F'/%3E%3Cstop offset='1' stop-color='%23A34F31'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1200' height='600' fill='url(%23g)'/%3E%3C/svg%3E";
+
+const RECEITAS = [
+{
+  slug:"brigadeiro", grupo:"Doces", nome:"Brigadeiro Cremoso",
+  resumo:"O clássico brasileiro no ponto de colher — brilhante, sedoso e com sabor intenso de cacau.",
+  desc:"Sobremesa de festa",
+  img:"https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=1600&q=80",
+  porcoes:"25", porcoesUn:"unidades", tempo:"30", tempoUn:"min", dificuldade:"Fácil", rendimento:"1 panela média",
+  ingredientes:[
+    ["1 lata","leite condensado (395 g)"],
+    ["4 col. sopa","chocolate em pó 50% cacau"],
+    ["1 col. sopa","manteiga sem sal"],
+    ["1 pitada","sal"],
+    ["100 g","chocolate granulado para enrolar"]
+  ],
+  utensilios:["Panela de fundo grosso","Espátula de silicone","Prato raso untado","Forminhas de papel","Balança de cozinha"],
+  passos:[
+    {t:"Prepare a base",d:"Em uma panela de fundo grosso e ainda fora do fogo, misture o leite condensado, o chocolate em pó peneirado, a manteiga e a pitada de sal até ficar homogêneo e sem grumos.",tip:null},
+    {t:"Cozinhe em fogo médio-baixo",d:"Leve ao fogo mexendo sem parar com a espátula, sempre raspando o fundo e as laterais. A mistura vai escurecer e engrossar aos poucos.",tip:"<b>Ponto certo:</b> está pronto quando você inclina a panela e a massa desliza em bloco, deixando o fundo limpo por 2 segundos."},
+    {t:"Resfrie",d:"Transfira imediatamente para um prato raso untado com manteiga, espalhe e deixe esfriar em temperatura ambiente por cerca de 40 minutos.",tip:null},
+    {t:"Enrole e finalize",d:"Com as mãos levemente untadas, faça bolinhas de aproximadamente 15 g, passe no granulado e acomode nas forminhas.",tip:null}
+  ]
+},
+{
+  slug:"feijoada", grupo:"Pratos principais", nome:"Feijoada Completa",
+  resumo:"Cozimento lento, caldo escuro e encorpado. O prato que pede mesa cheia e tempo de sobra.",
+  desc:"Almoço de domingo",
+  img:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80",
+  porcoes:"8", porcoesUn:"pessoas", tempo:"3", tempoUn:"h + 12 h de molho", dificuldade:"Médio", rendimento:"Panela de 6 L",
+  ingredientes:[
+    ["1 kg","feijão preto"],
+    ["300 g","carne-seca dessalgada"],
+    ["300 g","costelinha de porco"],
+    ["200 g","paio em rodelas"],
+    ["200 g","linguiça calabresa"],
+    ["150 g","bacon em cubos"],
+    ["2 un.","cebolas picadas"],
+    ["6 dentes","alho amassado"],
+    ["3 folhas","louro"],
+    ["a gosto","sal e pimenta-do-reino"]
+  ],
+  utensilios:["Panela de ferro ou caldeirão 6 L","Frigideira","Peneira grande","Faca de chef","Tábua de corte","Colher de pau"],
+  passos:[
+    {t:"Deixe de molho",d:"Na noite anterior, cubra o feijão preto com água fria e deixe descansar por 12 horas. Separadamente, dessalgue a carne-seca trocando a água 3 vezes.",tip:"<b>Atalho:</b> na pressão o feijão cozinha em 25 min sem molho, mas o caldo fica menos encorpado."},
+    {t:"Cozinhe as carnes salgadas",d:"Escorra o feijão, cubra com água nova e leve ao fogo com o louro, a carne-seca e a costelinha. Cozinhe em fogo baixo por 1 h 30 min, completando com água quente quando necessário.",tip:null},
+    {t:"Doure os embutidos",d:"Frite o bacon até liberar a gordura, retire e reserve. Na mesma gordura, doure o paio e a calabresa e junte tudo à panela do feijão.",tip:null},
+    {t:"Monte o refogado",d:"Na gordura restante, refogue a cebola até ficar translúcida e o alho até perfumar. Adicione 2 conchas de feijão, amasse bem e devolva à panela — é isso que engrossa o caldo.",tip:null},
+    {t:"Apure e descanse",d:"Cozinhe destampado por mais 40 minutos em fogo baixo, ajuste o sal e a pimenta. Desligue e deixe descansar 20 minutos antes de servir.",tip:"<b>Melhor no dia seguinte:</b> o sabor apura na geladeira. Reaqueça em fogo baixo com um pouco de água."}
+  ]
+},
+{
+  slug:"bolo-cenoura", grupo:"Doces", nome:"Bolo de Cenoura com Cobertura",
+  resumo:"Massa úmida de liquidificador e cobertura de chocolate que endurece levemente por cima.",
+  desc:"Café da tarde",
+  img:"https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=1600&q=80",
+  porcoes:"12", porcoesUn:"fatias", tempo:"1", tempoUn:"h 10 min", dificuldade:"Fácil", rendimento:"Forma 24 cm",
+  ingredientes:[
+    ["3 un.","cenouras médias em rodelas (300 g)"],
+    ["3 un.","ovos"],
+    ["1 copo","óleo de girassol (180 ml)"],
+    ["2 copos","açúcar refinado (360 g)"],
+    ["2 ½ copos","farinha de trigo (300 g)"],
+    ["1 col. sopa","fermento em pó"],
+    ["1 pitada","sal"],
+    ["—","<i>Cobertura:</i> 4 col. chocolate em pó, 3 col. açúcar, 2 col. manteiga, 4 col. leite"]
+  ],
+  utensilios:["Liquidificador","Forma de furo central 24 cm","Peneira","Tigela grande","Panela pequena","Espátula"],
+  passos:[
+    {t:"Aqueça o forno",d:"Pré-aqueça o forno a 180 °C. Unte a forma com manteiga e farinha, cobrindo bem o furo central.",tip:null},
+    {t:"Bata os líquidos",d:"No liquidificador, bata as cenouras, os ovos e o óleo por 3 minutos, até obter um creme laranja completamente liso.",tip:"<b>Sem pontinhos:</b> corte a cenoura em rodelas finas — pedaços grandes deixam fiapos na massa."},
+    {t:"Incorpore os secos",d:"Transfira para uma tigela e adicione o açúcar. Peneire a farinha e o sal aos poucos, misturando com espátula. Por último, junte o fermento com movimentos delicados.",tip:null},
+    {t:"Asse",d:"Despeje na forma e asse por 40 a 45 minutos. Teste com um palito no ponto mais alto: deve sair seco.",tip:null},
+    {t:"Faça a cobertura",d:"Leve todos os ingredientes da cobertura ao fogo baixo, mexendo até engrossar (cerca de 4 minutos). Despeje sobre o bolo ainda morno.",tip:null}
+  ]
+}
+];
+
+let atual = 0;
+
+function navHTML(filtro=""){
+  const grupos = [...new Set(RECEITAS.map(r=>r.grupo))];
+  return grupos.map(g=>{
+    const itens = RECEITAS.map((r,i)=>({r,i}))
+      .filter(({r})=>r.grupo===g && r.nome.toLowerCase().includes(filtro.toLowerCase()));
+    if(!itens.length) return "";
+    return `<div class="group">${g}</div>` + itens.map(({r,i})=>
+      `<button class="item ${i===atual?'active':''}" onclick="abrir(${i})">${r.nome}<small>${r.desc}</small></button>`
+    ).join("");
+  }).join("");
+}
+
+function receitaHTML(r){
+  return `
+  <div class="hero">
+    <img src="${r.img}" alt="${r.nome}" onerror="this.src='${FALLBACK}'">
+    <div class="hero-txt">
+      <span class="eyebrow">${r.grupo}</span>
+      <h1>${r.nome}</h1>
+      <p>${r.resumo}</p>
+    </div>
+  </div>
+
+  <dl class="meta">
+    <div><dt>Porções</dt><dd>${r.porcoes} <span>${r.porcoesUn}</span></dd></div>
+    <div><dt>Tempo de preparo</dt><dd>${r.tempo} <span>${r.tempoUn}</span></dd></div>
+    <div><dt>Dificuldade</dt><dd>${r.dificuldade}</dd></div>
+    <div><dt>Rendimento</dt><dd><span>${r.rendimento}</span></dd></div>
+  </dl>
+
+  <div class="wrap">
+    <div class="col-left">
+      <div class="card">
+        <h2>Ingredientes</h2>
+        <ul class="ing">${r.ingredientes.map(([q,n])=>`<li><span class="qty">${q}</span><span>${n}</span></li>`).join("")}</ul>
+      </div>
+      <div class="card">
+        <h2>Utensílios</h2>
+        <ul class="ut">${r.utensilios.map(u=>`<li>${u}</li>`).join("")}</ul>
+      </div>
+    </div>
+    <div>
+      <h2 class="section">Modo de preparo</h2>
+      <p class="section-note">${r.passos.length} etapas · leia tudo antes de começar</p>
+      <ol class="steps">
+        ${r.passos.map(p=>`<li><h3>${p.t}</h3><p>${p.d}</p>${p.tip?`<div class="tip">${p.tip}</div>`:""}</li>`).join("")}
+      </ol>
+    </div>
+  </div>`;
+}
+
+function toggleNav(force){
+  const abrirMenu = force !== undefined ? force : !document.body.classList.contains("nav-open");
+  document.body.classList.toggle("nav-open", abrirMenu);
+  document.querySelector(".burger").setAttribute("aria-expanded", abrirMenu);
+  document.body.style.overflow = abrirMenu ? "hidden" : "";
+}
+
+function abrir(i){
+  atual = i;
+  render();
+  toggleNav(false);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function filtrar(v){ document.getElementById("nav").innerHTML = navHTML(v); }
+function render(){
+  const r = RECEITAS[atual];
+  document.getElementById("nav").innerHTML = navHTML();
+  document.getElementById("main").innerHTML = receitaHTML(r);
+  document.getElementById("topbarTitle").innerHTML = `<small>${r.grupo}</small>${r.nome}`;
+}
+// Esc fecha o menu
+document.addEventListener("keydown", e => { if(e.key === "Escape") toggleNav(false); });
+render();
+</script>
+</body>
+</html>

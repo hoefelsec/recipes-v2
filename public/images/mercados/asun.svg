@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 64" role="img"
+     aria-label="Asun">
+  <!-- MARCA DE LUGAR, desenhada aqui: não é a identidade visual real de Asun.
+       Existe para o campo `logo` de `src/data/mercados.js` apontar para um arquivo
+       que existe, em vez de para uma promessa. -->
+  <title>Asun</title>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#2E6B3E"/>
+  <text x="32" y="43" text-anchor="middle" fill="#fff"
+        font-family="Georgia, 'Times New Roman', serif" font-size="32" font-weight="700">A</text>
+  <text x="74" y="41" fill="#2E6B3E"
+        font-family="Georgia, 'Times New Roman', serif" font-size="23" font-weight="600">Asun</text>
+</svg>

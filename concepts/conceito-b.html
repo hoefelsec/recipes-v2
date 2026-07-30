@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conceito B — Receitas</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5EFE6; --paper:#FFFFFF; --ink:#241E1A; --ink-soft:#736558;
+    --accent:#B5482F; --accent-dk:#8E3520; --gold:#C9A227; --sage:#6E7A5A;
+    --line:#E4D8C7; --sidebar:266px;
+    --sh:0 2px 4px rgba(36,30,26,.04),0 12px 32px rgba(36,30,26,.07);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:Karla,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,h4{font-family:"Playfair Display",Georgia,serif;font-weight:600}
+
+  /* ---------- SIDEBAR ---------- */
+  aside{
+    position:fixed;inset:0 auto 0 0;width:var(--sidebar);background:#2E2620;color:#F3E9DC;
+    display:flex;flex-direction:column;z-index:20;
+  }
+  .brand{padding:28px 22px 20px;border-bottom:1px solid rgba(255,255,255,.09)}
+  .brand h4{font-size:23px;color:#fff;letter-spacing:-.01em;line-height:1.15}
+  .brand h4 em{color:var(--gold);font-style:italic}
+  .brand span{display:block;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:rgba(243,233,220,.5);margin-top:7px}
+  nav{flex:1;overflow-y:auto;padding:16px 12px 24px}
+  .group{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(243,233,220,.42);padding:14px 10px 9px;font-weight:700}
+  .item{
+    display:flex;gap:11px;align-items:center;width:100%;text-align:left;border:0;cursor:pointer;
+    background:none;font:inherit;color:#EDE1D2;padding:8px 10px;border-radius:10px;transition:background .14s;
+  }
+  .item:hover{background:rgba(255,255,255,.07)}
+  .item.active{background:var(--accent)}
+  .thumb{
+    width:42px;height:42px;border-radius:8px;object-fit:cover;flex-shrink:0;
+    background:linear-gradient(135deg,#C98A5E,#8E3520);
+  }
+  .item.active .thumb{box-shadow:0 0 0 2px rgba(255,255,255,.5)}
+  .item b{display:block;font-size:14px;font-weight:600;line-height:1.25}
+  .item small{font-size:11px;color:rgba(237,225,210,.6);display:block;margin-top:2px}
+  .item.active small{color:rgba(255,255,255,.8)}
+  .side-foot{padding:16px 22px;border-top:1px solid rgba(255,255,255,.09);font-size:11px;color:rgba(243,233,220,.45)}
+
+  /* ---------- MAIN ---------- */
+  main{margin-left:var(--sidebar);padding:0 0 100px}
+  .page{max-width:860px;margin:0 auto;padding:0 40px}
+
+  .hero{position:relative;padding-top:40px}
+  .hero-img{
+    width:100%;aspect-ratio:16/8;object-fit:cover;border-radius:18px;display:block;
+    box-shadow:var(--sh);background:linear-gradient(135deg,#C98A5E,#8E3520);
+  }
+  .titlecard{
+    background:var(--paper);border-radius:16px;box-shadow:var(--sh);
+    margin:-58px 34px 0;padding:28px 34px 30px;position:relative;text-align:center;
+  }
+  .kicker{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:700}
+  .titlecard h1{font-size:clamp(30px,3.6vw,44px);letter-spacing:-.015em;line-height:1.08;margin:11px 0 12px}
+  .titlecard p{color:var(--ink-soft);font-size:15.5px;line-height:1.6;max-width:52ch;margin:0 auto}
+  .rule{display:flex;align-items:center;justify-content:center;gap:9px;margin-top:18px;color:var(--gold)}
+  .rule i{display:block;width:44px;height:1px;background:var(--line)}
+
+  /* pills */
+  .pills{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:26px 0 8px}
+  .pill{
+    background:var(--paper);border:1px solid var(--line);border-radius:100px;
+    padding:9px 17px;display:flex;align-items:baseline;gap:8px;box-shadow:0 1px 2px rgba(36,30,26,.04);
+  }
+  .pill b{font-family:"Playfair Display";font-size:17px;font-weight:600}
+  .pill span{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+
+  /* sections */
+  section{margin-top:52px}
+  .sechead{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+  .secnum{
+    width:29px;height:29px;border-radius:50%;background:var(--accent);color:#fff;
+    display:grid;place-items:center;font-size:12.5px;font-weight:700;font-family:Karla;flex-shrink:0;
+  }
+  .sechead h2{font-size:25px;letter-spacing:-.01em}
+  .sechead i{flex:1;height:1px;background:var(--line)}
+  .sechead em{font-style:normal;font-size:12.5px;color:var(--ink-soft)}
+
+  /* ingredientes com checkbox */
+  .ing{display:grid;grid-template-columns:1fr 1fr;gap:2px 30px;list-style:none}
+  .ing li label{
+    display:flex;gap:11px;align-items:flex-start;padding:10px 2px;border-bottom:1px solid var(--line);
+    font-size:14.5px;line-height:1.5;cursor:pointer;
+  }
+  .ing input{appearance:none;width:17px;height:17px;border:1.5px solid #CDBEA9;border-radius:5px;margin-top:2px;flex-shrink:0;cursor:pointer;transition:.14s}
+  .ing input:checked{background:var(--sage);border-color:var(--sage)}
+  .ing input:checked+span{text-decoration:line-through;color:#A99988}
+  .ing .q{font-weight:700;color:var(--accent-dk);font-variant-numeric:tabular-nums}
+  .ing li.wide{grid-column:1/-1}
+
+  /* utensilios */
+  .ut{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;list-style:none}
+  .ut li{
+    background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:13px 15px;
+    font-size:13.5px;color:#4C4137;display:flex;align-items:center;gap:9px;
+  }
+  .ut li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0}
+
+  /* passos */
+  .step{display:flex;gap:22px;padding:24px 0;border-bottom:1px solid var(--line)}
+  .step:last-child{border:0}
+  .step .n{
+    font-family:"Playfair Display";font-size:40px;font-weight:600;color:#DCC9B0;
+    line-height:.9;min-width:52px;font-variant-numeric:lining-nums;
+  }
+  .step h3{font-family:Karla;font-size:16.5px;font-weight:700;margin-bottom:7px}
+  .step p{font-size:15.5px;line-height:1.72;color:#463B32}
+  .tip{
+    margin-top:13px;background:#FBF6E6;border:1px solid #EDE0BC;border-radius:11px;padding:13px 16px;
+    font-size:13.5px;line-height:1.62;color:#6B5A26;
+  }
+  .tip b{color:var(--accent-dk)}
+
+  /* ---------- MOBILE TOPBAR / DRAWER ---------- */
+  .topbar{
+    display:none;position:sticky;top:0;z-index:30;background:#2E2620;color:#F3E9DC;
+    align-items:center;gap:12px;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top));
+  }
+  .burger{
+    width:44px;height:44px;flex-shrink:0;border:1px solid rgba(255,255,255,.18);border-radius:11px;
+    background:rgba(255,255,255,.07);display:grid;place-items:center;gap:4px;cursor:pointer;padding:0;
+  }
+  .burger i{display:block;width:17px;height:1.5px;background:#F3E9DC;border-radius:2px}
+  .topbar-title{
+    font-family:"Playfair Display",Georgia,serif;font-size:16px;font-weight:600;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .topbar-title small{
+    display:block;font-family:Karla;font-size:10px;font-weight:700;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--gold);
+  }
+  .scrim{display:none;position:fixed;inset:0;z-index:25;background:rgba(20,14,10,.5);opacity:0;transition:opacity .22s}
+  body.nav-open .scrim{display:block;opacity:1}
+
+  @media(max-width:900px){
+    .page{padding:0 24px}
+    .titlecard{margin:-42px 8px 0;padding:24px 22px 26px}
+    .ing{grid-template-columns:1fr}
+  }
+
+  @media(max-width:860px){
+    .topbar{display:flex}
+    aside{
+      transform:translateX(-100%);transition:transform .26s cubic-bezier(.32,.72,0,1);
+      width:min(84vw,300px);box-shadow:0 0 40px rgba(20,14,10,.35);
+    }
+    body.nav-open aside{transform:none}
+    main{margin-left:0;padding-bottom:80px}
+
+    .page{padding:0 16px}
+    .hero{padding-top:16px}
+    .hero-img{aspect-ratio:4/3;border-radius:14px}
+    .titlecard{margin:-34px 0 0;padding:22px 20px 24px;border-radius:14px}
+    .titlecard h1{font-size:clamp(25px,7vw,34px)}
+    .titlecard p{font-size:15px}
+    .rule{margin-top:15px}
+
+    /* pills: rolagem horizontal em vez de quebrar feio */
+    .pills{
+      flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;
+      margin:22px -16px 0;padding:2px 16px 6px;scroll-snap-type:x proximity;
+      -webkit-overflow-scrolling:touch;scrollbar-width:none;
+    }
+    .pills::-webkit-scrollbar{display:none}
+    .pill{flex-shrink:0;scroll-snap-align:start;padding:8px 15px}
+
+    section{margin-top:38px}
+    .sechead{gap:10px;margin-bottom:16px;flex-wrap:wrap}
+    .sechead h2{font-size:22px}
+    .sechead i{display:none}
+    .sechead em{flex-basis:100%;padding-left:39px;margin-top:-4px}
+
+    /* checkboxes maiores para o dedo */
+    .ing li label{padding:13px 2px;font-size:15.5px;gap:13px}
+    .ing input{width:22px;height:22px;margin-top:1px}
+    .ut{grid-template-columns:1fr 1fr;gap:9px}
+    .ut li{padding:12px 13px;font-size:13.5px}
+
+    .step{gap:0;flex-direction:column;padding:20px 0}
+    .step .n{font-size:26px;min-width:0;margin-bottom:6px;color:var(--accent);opacity:.55}
+    .step h3{font-size:17px}
+    .step p{font-size:16px;line-height:1.7}
+    .tip{font-size:14px;padding:12px 14px}
+  }
+
+  @media(max-width:400px){
+    .ut{grid-template-columns:1fr}
+  }
+
+  /* respeita o "reduzir movimento" do sistema */
+  @media(prefers-reduced-motion:reduce){ *{transition:none!important;scroll-behavior:auto!important} }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <button class="burger" aria-label="Abrir menu de receitas" aria-expanded="false" onclick="toggleNav()">
+    <i></i><i></i><i></i>
+  </button>
+  <div class="topbar-title" id="topbarTitle"><small>Receitas da Casa</small></div>
+</header>
+<div class="scrim" onclick="toggleNav(false)"></div>
+
+<aside>
+  <div class="brand">
+    <h4>Receitas <em>da Casa</em></h4>
+    <span>Conceito B</span>
+  </div>
+  <nav id="nav"></nav>
+  <div class="side-foot">3 receitas · atualizado hoje</div>
+</aside>
+
+<main id="main"></main>
+
+<script>
+const FALLBACK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='600'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23C98A5E'/%3E%3Cstop offset='1' stop-color='%238E3520'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1200' height='600' fill='url(%23g)'/%3E%3C/svg%3E";
+
+const RECEITAS = [
+{
+  slug:"brigadeiro", grupo:"Doces", nome:"Brigadeiro Cremoso", desc:"Sobremesa de festa",
+  resumo:"O clássico brasileiro no ponto de colher — brilhante, sedoso e com sabor intenso de cacau.",
+  img:"https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=1600&q=80",
+  porcoes:"25", porcoesUn:"unidades", tempo:"30 min", tempoUn:"preparo", dificuldade:"Fácil", forno:"—",
+  ingredientes:[["1 lata","leite condensado (395 g)"],["4 col. sopa","chocolate em pó 50% cacau"],["1 col. sopa","manteiga sem sal"],["1 pitada","sal"],["100 g","chocolate granulado"]],
+  utensilios:["Panela de fundo grosso","Espátula de silicone","Prato raso untado","Forminhas de papel","Balança de cozinha"],
+  passos:[
+    {t:"Prepare a base",d:"Em uma panela de fundo grosso e ainda fora do fogo, misture o leite condensado, o chocolate em pó peneirado, a manteiga e a pitada de sal até ficar homogêneo e sem grumos.",tip:null},
+    {t:"Cozinhe em fogo médio-baixo",d:"Leve ao fogo mexendo sem parar com a espátula, sempre raspando o fundo e as laterais. A mistura vai escurecer e engrossar aos poucos.",tip:"<b>Ponto certo:</b> está pronto quando você inclina a panela e a massa desliza em bloco, deixando o fundo limpo por 2 segundos."},
+    {t:"Resfrie",d:"Transfira imediatamente para um prato raso untado com manteiga, espalhe e deixe esfriar em temperatura ambiente por cerca de 40 minutos.",tip:null},
+    {t:"Enrole e finalize",d:"Com as mãos levemente untadas, faça bolinhas de aproximadamente 15 g, passe no granulado e acomode nas forminhas.",tip:null}
+  ]
+},
+{
+  slug:"feijoada", grupo:"Pratos principais", nome:"Feijoada Completa", desc:"Almoço de domingo",
+  resumo:"Cozimento lento, caldo escuro e encorpado. O prato que pede mesa cheia e tempo de sobra.",
+  img:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80",
+  porcoes:"8", porcoesUn:"pessoas", tempo:"3 h", tempoUn:"+ 12 h de molho", dificuldade:"Médio", forno:"Panela 6 L",
+  ingredientes:[["1 kg","feijão preto"],["300 g","carne-seca dessalgada"],["300 g","costelinha de porco"],["200 g","paio em rodelas"],["200 g","linguiça calabresa"],["150 g","bacon em cubos"],["2 un.","cebolas picadas"],["6 dentes","alho amassado"],["3 folhas","louro"],["a gosto","sal e pimenta-do-reino"]],
+  utensilios:["Caldeirão de ferro 6 L","Frigideira","Peneira grande","Faca de chef","Tábua de corte","Colher de pau"],
+  passos:[
+    {t:"Deixe de molho",d:"Na noite anterior, cubra o feijão preto com água fria e deixe descansar por 12 horas. Separadamente, dessalgue a carne-seca trocando a água 3 vezes.",tip:"<b>Atalho:</b> na pressão o feijão cozinha em 25 min sem molho, mas o caldo fica menos encorpado."},
+    {t:"Cozinhe as carnes salgadas",d:"Escorra o feijão, cubra com água nova e leve ao fogo com o louro, a carne-seca e a costelinha. Cozinhe em fogo baixo por 1 h 30 min, completando com água quente quando necessário.",tip:null},
+    {t:"Doure os embutidos",d:"Frite o bacon até liberar a gordura, retire e reserve. Na mesma gordura, doure o paio e a calabresa e junte tudo à panela do feijão.",tip:null},
+    {t:"Monte o refogado",d:"Na gordura restante, refogue a cebola até ficar translúcida e o alho até perfumar. Adicione 2 conchas de feijão, amasse bem e devolva à panela — é isso que engrossa o caldo.",tip:null},
+    {t:"Apure e descanse",d:"Cozinhe destampado por mais 40 minutos em fogo baixo, ajuste o sal e a pimenta. Desligue e deixe descansar 20 minutos antes de servir.",tip:"<b>Melhor no dia seguinte:</b> o sabor apura na geladeira. Reaqueça em fogo baixo com um pouco de água."}
+  ]
+},
+{
+  slug:"bolo-cenoura", grupo:"Doces", nome:"Bolo de Cenoura com Cobertura", desc:"Café da tarde",
+  resumo:"Massa úmida de liquidificador e cobertura de chocolate que endurece levemente por cima.",
+  img:"https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=1600&q=80",
+  porcoes:"12", porcoesUn:"fatias", tempo:"1 h 10", tempoUn:"min total", dificuldade:"Fácil", forno:"180 °C",
+  ingredientes:[["3 un.","cenouras médias em rodelas (300 g)"],["3 un.","ovos"],["1 copo","óleo de girassol (180 ml)"],["2 copos","açúcar refinado (360 g)"],["2 ½ copos","farinha de trigo (300 g)"],["1 col. sopa","fermento em pó"],["1 pitada","sal"],["Cobertura","4 col. chocolate em pó · 3 col. açúcar · 2 col. manteiga · 4 col. leite"]],
+  utensilios:["Liquidificador","Forma de furo central 24 cm","Peneira","Tigela grande","Panela pequena","Espátula"],
+  passos:[
+    {t:"Aqueça o forno",d:"Pré-aqueça o forno a 180 °C. Unte a forma com manteiga e farinha, cobrindo bem o furo central.",tip:null},
+    {t:"Bata os líquidos",d:"No liquidificador, bata as cenouras, os ovos e o óleo por 3 minutos, até obter um creme laranja completamente liso.",tip:"<b>Sem pontinhos:</b> corte a cenoura em rodelas finas — pedaços grandes deixam fiapos na massa."},
+    {t:"Incorpore os secos",d:"Transfira para uma tigela e adicione o açúcar. Peneire a farinha e o sal aos poucos, misturando com espátula. Por último, junte o fermento com movimentos delicados.",tip:null},
+    {t:"Asse",d:"Despeje na forma e asse por 40 a 45 minutos. Teste com um palito no ponto mais alto: deve sair seco.",tip:null},
+    {t:"Faça a cobertura",d:"Leve todos os ingredientes da cobertura ao fogo baixo, mexendo até engrossar (cerca de 4 minutos). Despeje sobre o bolo ainda morno.",tip:null}
+  ]
+}
+];
+
+let atual = 0;
+
+function navHTML(){
+  const grupos=[...new Set(RECEITAS.map(r=>r.grupo))];
+  return grupos.map(g=>`<div class="group">${g}</div>`+
+    RECEITAS.map((r,i)=>({r,i})).filter(({r})=>r.grupo===g).map(({r,i})=>
+      `<button class="item ${i===atual?'active':''}" onclick="abrir(${i})">
+         <img class="thumb" src="${r.img}" alt="" onerror="this.removeAttribute('src')">
+         <span><b>${r.nome}</b><small>${r.desc}</small></span>
+       </button>`).join("")
+  ).join("");
+}
+
+function receitaHTML(r){
+  return `
+  <div class="page">
+    <div class="hero">
+      <img class="hero-img" src="${r.img}" alt="${r.nome}" onerror="this.src='${FALLBACK}'">
+      <div class="titlecard">
+        <div class="kicker">${r.grupo}</div>
+        <h1>${r.nome}</h1>
+        <p>${r.resumo}</p>
+        <div class="rule"><i></i>❧<i></i></div>
+      </div>
+    </div>
+
+    <div class="pills">
+      <div class="pill"><b>${r.porcoes}</b><span>${r.porcoesUn}</span></div>
+      <div class="pill"><b>${r.tempo}</b><span>${r.tempoUn}</span></div>
+      <div class="pill"><b>${r.dificuldade}</b><span>dificuldade</span></div>
+      <div class="pill"><b>${r.forno}</b><span>${r.forno==="—"?"sem forno":"equipamento"}</span></div>
+    </div>
+
+    <section>
+      <div class="sechead"><span class="secnum">1</span><h2>Ingredientes</h2><i></i><em>${r.ingredientes.length} itens · marque conforme separa</em></div>
+      <ul class="ing">
+        ${r.ingredientes.map(([q,n],k)=>`<li class="${q.length>9?'wide':''}"><label><input type="checkbox"><span><span class="q">${q}</span> ${n}</span></label></li>`).join("")}
+      </ul>
+    </section>
+
+    <section>
+      <div class="sechead"><span class="secnum">2</span><h2>Utensílios</h2><i></i><em>${r.utensilios.length} itens</em></div>
+      <ul class="ut">${r.utensilios.map(u=>`<li>${u}</li>`).join("")}</ul>
+    </section>
+
+    <section>
+      <div class="sechead"><span class="secnum">3</span><h2>Modo de preparo</h2><i></i><em>${r.passos.length} etapas</em></div>
+      ${r.passos.map((p,k)=>`<div class="step"><div class="n">${String(k+1).padStart(2,"0")}</div><div><h3>${p.t}</h3><p>${p.d}</p>${p.tip?`<div class="tip">${p.tip}</div>`:""}</div></div>`).join("")}
+    </section>
+  </div>`;
+}
+
+function toggleNav(force){
+  const abrirMenu = force !== undefined ? force : !document.body.classList.contains("nav-open");
+  document.body.classList.toggle("nav-open", abrirMenu);
+  document.querySelector(".burger").setAttribute("aria-expanded", abrirMenu);
+  document.body.style.overflow = abrirMenu ? "hidden" : "";
+}
+
+function abrir(i){
+  atual = i;
+  render();
+  toggleNav(false);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function render(){
+  const r = RECEITAS[atual];
+  document.getElementById("nav").innerHTML=navHTML();
+  document.getElementById("main").innerHTML=receitaHTML(r);
+  document.getElementById("topbarTitle").innerHTML=`<small>${r.grupo}</small>${r.nome}`;
+}
+document.addEventListener("keydown", e => { if(e.key === "Escape") toggleNav(false); });
+render();
+</script>
+</body>
+</html>

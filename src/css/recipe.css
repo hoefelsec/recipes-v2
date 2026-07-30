@@ -1,0 +1,395 @@
+/* Página da receita: foto, faixa de dados, ingredientes, nutrientes,
+   utensílios e modo de preparo. */
+
+article { display: block; }
+
+/* --------------------------------------------------------------- hero ------ */
+
+.hero {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  aspect-ratio: 16 / 8;
+  max-height: 380px;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 20px;
+}
+.hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(20, 34, 22, .78) 0%, rgba(20, 34, 22, .1) 46%, transparent 70%);
+}
+.hero .credito {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  color: rgba(255, 255, 255, .82);
+  z-index: 2;
+}
+.hero .credito a { color: #fff; }
+.hero-txt {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  z-index: 2;
+  padding: 26px 30px;
+  color: #fff;
+}
+.hero-txt .eyebrow {
+  color: #fff;
+  background: rgba(255, 255, 255, .18);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  backdrop-filter: blur(4px);
+}
+.hero-txt h1 {
+  color: #fff;
+  font-size: clamp(1.8rem, 1.1rem + 2.8vw, 2.8rem);
+  margin-top: 12px;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, .3);
+}
+.hero-txt .resumo {
+  color: rgba(255, 255, 255, .92);
+  max-width: 60ch;
+  margin-top: 6px;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .35);
+}
+
+/* --------------------------------------------------------------- meta ------ */
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 26px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px 24px;
+  margin-bottom: 24px;
+}
+.meta > div { min-width: 0; }
+.meta dt {
+  font-size: .72rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+.meta dd { color: var(--ink); font-weight: 600; }
+.meta dd span { font-weight: 500; color: var(--ink-body); }
+.meta-porcoes dd { margin-top: 2px; }
+.meta-add { margin-left: auto; }
+.meta-add .btn-add { width: auto; }
+
+/* --------------------------------------------------------------- colunas --- */
+
+.wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: 24px;
+  align-items: start;
+}
+.col-left { min-width: 0; }
+
+/* --------------------------------------------------------------- ingredientes */
+
+.ing-dica {
+  color: var(--ink-soft);
+  font-size: .88rem;
+  margin-bottom: 12px;
+}
+.ing { list-style: none; padding: 0; }
+.ing > li {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: baseline;
+  gap: 6px 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+.ing > li:last-child { border-bottom: none; }
+.ing > li.sub {
+  display: block;
+  border-bottom: none;
+  padding: 16px 0 4px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--verde-escuro);
+  font-size: .95rem;
+}
+
+.ing-nome {
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--ink);
+  font-weight: 500;
+}
+button.ing-nome { cursor: pointer; }
+button.ing-nome:hover { color: var(--verde-escuro); text-decoration: underline; text-underline-offset: 3px; }
+.ing-marca { font-style: normal; color: var(--ink-faint); font-weight: 500; }
+.ing .nota { color: var(--ink-soft); font-weight: 400; font-size: .9em; }
+
+.qty {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-body);
+  white-space: nowrap;
+}
+button.qty.conv {
+  background: var(--chip);
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 3px 10px;
+  color: var(--verde-escuro);
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  transition: background .15s var(--ease);
+}
+button.qty.conv:hover { background: var(--wash-verde); }
+button.qty.conv.trocada::after {
+  content: "";
+  position: absolute;
+  top: 2px; right: 2px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--verde-fresco);
+}
+
+.ing-preco {
+  min-width: 62px;
+  text-align: right;
+  color: var(--verde-escuro);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.ing-preco.sem-preco { color: var(--ink-faint); font-weight: 500; cursor: help; }
+
+/* Estado da linha diante do mercado ativo */
+.ing > li.ing-aviso { background: var(--amarelo-wash); border-radius: var(--radius-sm); padding-left: 10px; padding-right: 10px; }
+.ing > li.ing-aviso .ing-preco { color: var(--amarelo); }
+.ing > li.ing-errada { background: var(--vermelho-wash); border-radius: var(--radius-sm); padding-left: 10px; padding-right: 10px; }
+.ing > li.ing-errada .ing-preco { color: var(--vermelho); }
+
+/* Menu de troca de medida */
+.conv-menu {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 10px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+}
+.conv-menu button {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  border: 1px solid var(--line-strong);
+  background: var(--paper);
+  border-radius: var(--radius-pill);
+  padding: 6px 12px;
+  color: var(--ink-body);
+  font-weight: 500;
+  transition: background .12s var(--ease);
+}
+.conv-menu button:hover { background: var(--hover); }
+.conv-menu button.atual { background: var(--verde-escuro); color: #fff; border-color: var(--verde-escuro); }
+.conv-menu button em { font-style: normal; font-size: .78rem; opacity: .75; }
+
+/* Total e custo por porção */
+.custo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--line-strong);
+}
+.custo > div {
+  background: var(--wash-verde);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+}
+.custo dt { font-size: .78rem; color: var(--ink-soft); font-weight: 600; }
+.custo dd { font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; color: var(--verde-escuro); margin-top: 2px; }
+.custo-fora, .compra-fora { font-size: .82rem; color: var(--ink-soft); margin-top: 8px; }
+
+.ing-nota-preco {
+  font-size: .8rem;
+  color: var(--ink-faint);
+  margin-top: 14px;
+  line-height: 1.5;
+}
+.nota-amarela { color: var(--amarelo); }
+.nota-vermelha { color: var(--vermelho); }
+
+.escala-aviso {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--wash-laranja);
+  border-left: 3px solid var(--laranja);
+  border-radius: var(--radius-sm);
+  font-size: .86rem;
+  color: var(--ink-body);
+}
+.escala-aviso:empty { display: none; }
+
+/* --------------------------------------------------------------- nutrientes */
+
+.card-nutri .nutri {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.nutri li {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 12px 10px;
+  text-align: center;
+}
+.nutri li span { display: block; font-size: .74rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .04em; }
+.nutri li b { display: block; font-family: var(--font-display); font-size: 1.15rem; color: var(--ink); margin-top: 4px; }
+.nutri li b em { font-style: normal; font-size: .72rem; color: var(--ink-faint); font-weight: 500; }
+.nutri li.nutri-destaque { background: var(--wash-verde); border-color: transparent; }
+.nutri li.nutri-destaque b { color: var(--verde-escuro); }
+
+.nutri-mais {
+  border: 1px solid var(--line-strong);
+  background: var(--paper);
+  color: var(--verde-escuro);
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  padding: 9px 16px;
+  transition: background .15s var(--ease);
+}
+.nutri-mais:hover { background: var(--wash-verde); }
+.nutri-nota { font-size: .78rem; color: var(--ink-faint); margin-top: 12px; line-height: 1.5; }
+
+/* --------------------------------------------------------------- utensílios */
+
+.ut { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.ut li {
+  background: var(--chip);
+  color: var(--ink-body);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  font-size: .9rem;
+}
+
+/* --------------------------------------------------------------- preparo --- */
+
+.section {
+  font-size: 1.3rem;
+  margin-bottom: 4px;
+}
+.section-note { color: var(--ink-soft); font-size: .88rem; margin-bottom: 18px; }
+.steps { list-style: none; padding: 0; counter-reset: passo; }
+.steps > li {
+  position: relative;
+  padding: 0 0 22px 52px;
+  counter-increment: passo;
+}
+.steps > li::before {
+  content: counter(passo);
+  position: absolute;
+  left: 0; top: 0;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--verde-escuro);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-brand);
+}
+.steps > li::after {
+  content: "";
+  position: absolute;
+  left: 16px; top: 40px; bottom: 6px;
+  width: 2px;
+  background: var(--line);
+}
+.steps > li:last-child::after { display: none; }
+.steps h3 { font-size: 1.02rem; margin-bottom: 4px; }
+.steps p { color: var(--ink-body); }
+.tip {
+  margin-top: 8px;
+  padding: 10px 14px;
+  background: var(--wash-laranja);
+  border-left: 3px solid var(--laranja);
+  border-radius: var(--radius-sm);
+  font-size: .88rem;
+  color: var(--ink-body);
+}
+.tip b { color: var(--laranja-2); }
+
+/* --------------------------------------------------------------- preço nas telas de receita */
+
+.receita-preco { display: flex; flex-direction: column; }
+.receita-preco b { font-family: var(--font-display); font-size: 1.05rem; color: var(--verde-escuro); }
+.receita-preco-piso { font-size: .72rem; color: var(--ink-faint); text-transform: uppercase; letter-spacing: .04em; }
+.receita-preco-porcao { font-size: .8rem; color: var(--ink-soft); }
+
+/* ======================================================= janela de nutrientes */
+
+.nutri-dl-sub { color: var(--ink-soft); margin-bottom: 4px; }
+.nutri-bloco h3 { font-size: 1.05rem; margin: 8px 0 14px; }
+.nutri-painel {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 26px;
+  align-items: start;
+}
+.nutri-barras { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.nutri-barras li {
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+.nb-rotulo { font-size: .86rem; color: var(--ink-body); font-weight: 500; }
+.nb-barra {
+  grid-column: 2;
+  height: 9px;
+  background: var(--cinza-claro);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+.nb-barra i { display: block; height: 100%; border-radius: var(--radius-pill); }
+.nb-pct { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.nb-detalhe { grid-column: 2 / -1; font-size: .76rem; color: var(--ink-faint); }
+
+.nutri-rosca { text-align: center; }
+.rosca-titulo { font-size: .8rem; color: var(--ink-soft); margin-bottom: 8px; }
+.rosca { width: 132px; height: 132px; transform: rotate(-90deg); }
+.rosca-fundo { fill: none; stroke: var(--cinza-claro); stroke-width: 10; }
+.rosca-fatia { fill: none; stroke-width: 10; stroke-linecap: butt; }
+.rosca-legenda { list-style: none; padding: 0; margin-top: 14px; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+.rosca-legenda li { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; }
+.rl-cor { width: 12px; height: 12px; border-radius: 3px; }
+.rl-nome { font-size: .86rem; }
+.rl-pct { font-weight: 700; }
+.rl-meta { grid-column: 2 / -1; font-size: .74rem; color: var(--ink-faint); font-style: normal; }
+
+.nutri-dl-nota { font-size: .8rem; color: var(--ink-soft); margin-top: 14px; line-height: 1.5; }
+.nutri-dl-aviso { font-size: .8rem; color: var(--ink-faint); }

@@ -1,0 +1,147 @@
+/* Adaptações por largura de tela.
+   Base é desktop (menu lateral). Abaixo de 1000px vira app de celular:
+   menu lateral escondido, barra de abas embaixo, marca na barra superior. */
+
+/* Coluna dos filtros um pouco menor em telas médias */
+@media (max-width: 1180px) {
+  :root { --gutter: 28px; }
+}
+
+@media (max-width: 1000px) {
+  body {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "main";
+  }
+
+  .sidebar { display: none; }
+  .tabbar { display: flex; }
+  .brand-mark { display: inline-flex; }
+
+  main#conteudo {
+    padding: 18px var(--gutter-mobile) calc(var(--tabbar-h) + 26px);
+  }
+
+  /* No celular a barra empilha: marca + ações em cima, busca ocupando a linha toda
+     embaixo — como na tela inicial da referência. */
+  .topbar {
+    height: auto;
+    min-height: var(--cabecalho-h);
+    flex-wrap: wrap;
+    padding: 10px var(--gutter-mobile);
+    gap: 10px 12px;
+  }
+  .brand-mark { order: 0; }
+  .topbar-acoes { order: 1; margin-left: auto; gap: 8px; }
+  .busca { order: 2; flex-basis: 100%; max-width: none; }
+  /* O logo do mercado cede espaço ao nome quando aperta */
+  .mercado-logo { display: none; }
+  .btn-prefs-texto { display: none; }
+  .btn-prefs { padding: 9px 12px; }
+
+  /* A busca some no desktop-do-celular? Não: fica, mas divide a fileira */
+  .busca { max-width: none; }
+
+  /* -------- lista de receitas: filtros viram gaveta -------- */
+  .area:has(.area-lista) { display: block; }
+  .filtros-caixa { position: static; margin-bottom: 18px; }
+  .filtros-abrir {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--line-strong);
+    background: var(--paper);
+    color: var(--ink);
+    font-weight: 600;
+    border-radius: var(--radius-pill);
+    padding: 10px 18px;
+  }
+  .filtros-abrir em {
+    font-style: normal;
+    background: var(--verde-escuro);
+    color: #fff;
+    border-radius: var(--radius-pill);
+    padding: 0 8px;
+    font-size: .78rem;
+  }
+  .filtros-painel { display: none; margin-top: 12px; }
+  .filtros-caixa[data-aberta] .filtros-painel { display: block; }
+
+  /* -------- receita: uma coluna -------- */
+  .wrap { grid-template-columns: minmax(0, 1fr); }
+  .nutri-painel { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+  .nutri-barras { width: 100%; }
+  .meta-add { margin-left: 0; flex-basis: 100%; }
+  .meta-add .btn-add { width: 100%; }
+
+  /* -------- carrinho: cartão empilha -------- */
+  .cart-linha {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+  }
+  .cart-foto { width: 68px; height: 68px; }
+  .cart-info { flex: 1 1 55%; }
+  .cart-remover { order: 5; margin-left: auto; }
+  .cart-controle, .cart-preparos { flex: 0 0 auto; }
+  .cart-abrir { flex-basis: 100%; }
+
+  /* compra: nome em cima, números embaixo */
+  .compra-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 16px;
+  }
+  .compra-nome { flex-basis: 100%; }
+}
+
+@media (max-width: 560px) {
+  .vitrine { grid-template-columns: minmax(0, 1fr); }
+  .custo { grid-template-columns: 1fr; }
+  .area-head h1 { font-size: 1.55rem; }
+  .hero { aspect-ratio: 3 / 2; }
+  .compra-total { grid-template-columns: 1fr 1fr; }
+}
+
+/* ============================================ barra de abas (celular) ==== */
+
+.tabbar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  height: var(--tabbar-h);
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -2px 14px rgba(20, 40, 24, .06);
+  z-index: 40;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.tab-link {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: .68rem;
+  color: var(--ink-soft);
+  text-decoration: none;
+  border: none;
+  background: none;
+  position: relative;
+}
+.tab-link svg { width: 23px; height: 23px; }
+.tab-link.area-link[aria-current="page"] { color: var(--verde-escuro); font-weight: 600; }
+.tab-link .cart-badge {
+  position: absolute;
+  top: 6px;
+  right: calc(50% - 22px);
+  background: var(--laranja-2);
+  color: #fff;
+  font-size: .64rem;
+  font-weight: 700;
+  min-width: 17px; height: 17px;
+  padding: 0 4px;
+  border-radius: var(--radius-pill);
+  display: inline-flex; align-items: center; justify-content: center;
+}

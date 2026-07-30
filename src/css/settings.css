@@ -1,0 +1,139 @@
+/* Diálogos (<dialog>): preferências, detalhes de nutrientes, escolha de produto.
+   Todos compartilham a moldura `.pref-form` / `.pref-head` / `.pref-foot`. */
+
+dialog {
+  border: none;
+  padding: 0;
+  border-radius: var(--radius-lg);
+  background: var(--paper);
+  color: var(--ink-body);
+  box-shadow: var(--shadow-lg);
+  width: min(92vw, 560px);
+  max-height: 88vh;
+  overflow: auto;
+}
+dialog::backdrop { background: rgba(20, 32, 22, .5); backdrop-filter: blur(3px); }
+dialog[open] { animation: dialogo-entra .24s var(--ease); }
+@keyframes dialogo-entra { from { opacity: 0; transform: translateY(10px) scale(.99); } }
+
+/* Sem <dialog> nativo (plano B): centraliza pelo atributo open */
+dialog:not([open]) { display: none; }
+
+.pref-form { padding: 22px 24px 20px; }
+
+.pref-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+  padding-bottom: 8px;
+  z-index: 1;
+}
+.pref-head h2 { font-size: 1.3rem; }
+.pref-fechar {
+  border: none;
+  background: var(--chip);
+  color: var(--ink-soft);
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  font-size: 1rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background .15s var(--ease), color .15s var(--ease);
+}
+.pref-fechar:hover { background: var(--vermelho-wash); color: var(--vermelho); }
+
+.pref-grupo { border: none; padding: 16px 0; margin: 0; border-top: 1px solid var(--line); }
+.pref-grupo:first-of-type { border-top: none; }
+.pref-grupo legend { font-family: var(--font-display); font-weight: 600; color: var(--ink); font-size: 1rem; padding: 0; margin-bottom: 4px; }
+.pref-ajuda { font-size: .84rem; color: var(--ink-soft); margin-bottom: 10px; }
+
+.pref-opcao {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background .12s var(--ease);
+}
+.pref-opcao:hover { background: var(--hover); }
+.pref-opcao input { width: 18px; height: 18px; accent-color: var(--verde-escuro); }
+
+.pref-num {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+}
+.pref-num span { font-size: .92rem; }
+.pref-num input, .pref-macro input[type=number] {
+  width: 92px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  text-align: right;
+  background: var(--paper);
+  color: var(--ink);
+}
+.pref-num em { color: var(--ink-faint); font-style: normal; font-size: .84rem; min-width: 30px; }
+
+.pref-macro {
+  display: grid;
+  grid-template-columns: 108px 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+.pm-nome { font-weight: 500; font-size: .92rem; }
+.pm-faixa { accent-color: var(--verde-escuro); }
+.pm-pct { font-weight: 700; color: var(--verde-escuro); font-variant-numeric: tabular-nums; min-width: 46px; text-align: right; }
+.pm-gramas { display: inline-flex; align-items: center; gap: 5px; }
+.pm-gramas input { width: 68px; }
+.pm-gramas em { font-style: normal; color: var(--ink-faint); font-size: .84rem; }
+
+.pref-soma { font-size: .84rem; color: var(--ink-soft); margin-top: 6px; }
+.pref-soma.fora { color: var(--amarelo); font-weight: 500; }
+
+.pref-nota { font-size: .78rem; color: var(--ink-faint); line-height: 1.5; margin-top: 12px; }
+
+.pref-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.pref-limpar {
+  background: none; border: 1px solid var(--line-strong);
+  color: var(--ink-soft); border-radius: var(--radius-pill);
+  padding: 10px 16px; font-weight: 500;
+  transition: background .15s var(--ease);
+}
+.pref-limpar:hover { background: var(--hover); }
+.pref-ok {
+  background: var(--verde-escuro); color: #fff; border: none;
+  border-radius: var(--radius-pill); padding: 10px 22px; font-weight: 600;
+  font-family: var(--font-display);
+  box-shadow: var(--shadow-brand);
+  transition: background .15s var(--ease);
+}
+.pref-ok:hover { background: var(--verde-escuro-2); }
+
+/* Lista da janela de ajuda */
+.ajuda-lista { list-style: none; padding: 0; margin: 8px 0; display: flex; flex-direction: column; gap: 8px; }
+.ajuda-lista li {
+  padding: 10px 14px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: .9rem;
+}
+.ajuda-lista li b { color: var(--verde-escuro); }

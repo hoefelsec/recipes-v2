@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preview Chef</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="src/css/tokens.css">
+<link rel="stylesheet" href="src/css/base.css">
+<link rel="stylesheet" href="src/css/header.css">
+<link rel="stylesheet" href="src/css/recipe.css">
+<link rel="stylesheet" href="src/css/settings.css">
+<link rel="stylesheet" href="src/css/shop.css">
+<link rel="stylesheet" href="src/css/responsive.css">
+</head>
+<body>
+
+<aside class="sidebar">
+  <a class="side-brand" href="#">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 14a4 4 0 0 1-1-7.9A4.5 4.5 0 0 1 14.5 4 4 4 0 0 1 18 6.1 4 4 0 0 1 17 14"/><path d="M6.5 14h11v5a1.5 1.5 0 0 1-1.5 1.5H8A1.5 1.5 0 0 1 6.5 19z"/><path d="M10 14v3M13 14v3"/></svg>
+    <span>Chef</span>
+  </a>
+  <nav class="side-nav">
+    <a class="side-link area-link" aria-current="page" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9.5 20v-6h5v6"/></svg><span>Início</span></a>
+    <a class="side-link area-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.5h2.2l2.3 10.8a1.6 1.6 0 0 0 1.6 1.2h8.1a1.6 1.6 0 0 0 1.6-1.2L20.6 8H6"/><circle cx="9.5" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/></svg><span>Carrinho</span><span class="cart-badge">3</span></a>
+    <a class="side-link area-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9z"/><path d="M9 12h6M9 16h4"/></svg><span>Listas de compras</span></a>
+    <button class="side-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16l-1 5H5z"/><path d="M5 9v11h14V9"/><path d="M9.5 20v-6h5v6"/></svg><span>Mercados</span></button>
+  </nav>
+  <hr class="side-sep">
+  <div class="side-foot">
+    <button class="side-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2-1.5-2-3.4-2.4.9a7.6 7.6 0 0 0-1.7-1L15 2.6h-4l-.3 2.4a7.6 7.6 0 0 0-1.7 1L6.6 5.1l-2 3.4L6.6 10a7.6 7.6 0 0 0 0 2l-2 1.5 2 3.4 2.4-.9a7.6 7.6 0 0 0 1.7 1l.3 2.4h4l.3-2.4a7.6 7.6 0 0 0 1.7-1l2.4.9 2-3.4z"/></svg><span>Configurações</span></button>
+    <button class="side-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.5 2.5 0 0 1 4.6 1.3c0 1.7-2.2 2-2.2 3.5"/><path d="M12 17.2h.01"/></svg><span>Ajuda</span></button>
+  </div>
+</aside>
+
+<div class="app-main">
+  <header class="topbar">
+    <a class="brand-mark" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 14a4 4 0 0 1-1-7.9A4.5 4.5 0 0 1 14.5 4 4 4 0 0 1 18 6.1 4 4 0 0 1 17 14"/><path d="M6.5 14h11v5a1.5 1.5 0 0 1-1.5 1.5H8A1.5 1.5 0 0 1 6.5 19z"/></svg><span>Chef</span></a>
+    <div class="busca"><input type="search" placeholder="Buscar receitas, ingredientes…"></div>
+    <div class="topbar-acoes">
+      <div class="mercado-seletor"><select><option>Todos os mercados</option><option>Zaffari</option></select></div>
+      <button class="btn-prefs"><span aria-hidden="true">⚙</span> <span class="btn-prefs-texto">Preferências</span></button>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <!-- ===================== LISTA / INÍCIO ===================== -->
+    <div class="area">
+      <header class="area-head">
+        <p class="eyebrow-escuro">Receitas</p>
+        <h1>Monte a lista da semana</h1>
+        <p class="area-sub">Escolha as porções de cada receita e adicione ao carrinho. No fim, a lista de compras sai com tudo somado.</p>
+      </header>
+
+      <aside class="filtros-caixa">
+        <form class="filtros">
+          <div class="filtros-topo"><h2>Filtrar</h2></div>
+          <fieldset class="filtro-grupo">
+            <legend>Categoria</legend>
+            <label class="filtro-opcao"><input type="checkbox" checked><span>Pratos principais</span><em>1</em></label>
+            <label class="filtro-opcao"><input type="checkbox"><span>Doces</span><em>2</em></label>
+            <label class="filtro-opcao"><input type="checkbox"><span>Acompanhamentos</span><em>0</em></label>
+          </fieldset>
+          <fieldset class="filtro-grupo">
+            <legend>Custo por porção</legend>
+            <input class="filtro-barra" type="range" min="0.5" max="12" value="12">
+            <p class="filtro-valor">Qualquer preço — até <strong>R$ 12,00</strong> por porção</p>
+          </fieldset>
+          <p class="filtro-nota filtro-sem-mercado">Escolha um mercado no cabeçalho para filtrar pelo que dá para comprar lá.</p>
+        </form>
+      </aside>
+
+      <div class="area-lista">
+        <section class="vitrine-secao">
+          <h2 class="vitrine-titulo">Pratos principais</h2>
+          <div class="vitrine">
+            <article class="produto">
+              <a class="produto-foto"><img class="sem-foto" alt=""></a>
+              <div class="produto-corpo">
+                <p class="produto-grupo">Pratos principais</p>
+                <h3 class="produto-nome"><a href="#">Feijoada de panela</a></h3>
+                <p class="produto-resumo">O feijão preto no capricho, com as carnes na medida e a couve refogada.</p>
+                <div class="produto-acoes">
+                  <div class="produto-linha">
+                    <div class="porcoes"><button class="pbtn">−</button><output class="pval">8 <span>p.</span></output><button class="pbtn">+</button></div>
+                    <div class="produto-preco"><p class="receita-preco"><b>R$ 64,13</b><span class="receita-preco-porcao">R$ 8,02 por pessoa</span></p></div>
+                  </div>
+                  <button class="btn-add">Adicionar ao carrinho</button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+        <section class="vitrine-secao">
+          <h2 class="vitrine-titulo">Doces</h2>
+          <div class="vitrine">
+            <article class="produto">
+              <a class="produto-foto"><img class="sem-foto" alt=""></a>
+              <div class="produto-corpo">
+                <p class="produto-grupo">Doces</p>
+                <h3 class="produto-nome"><a href="#">Brigadeiro de colher</a></h3>
+                <p class="produto-resumo">Cremoso, no ponto de colher, com bastante chocolate.</p>
+                <div class="produto-acoes">
+                  <div class="produto-linha">
+                    <div class="porcoes"><button class="pbtn">−</button><output class="pval">30 <span>un.</span></output><button class="pbtn">+</button></div>
+                    <div class="produto-preco"><p class="receita-preco"><span class="receita-preco-piso">a partir de</span> <b>R$ 16,06</b><span class="receita-preco-porcao">R$ 0,53 por unidade</span></p></div>
+                  </div>
+                  <button class="btn-add">Adicionar ao carrinho</button>
+                </div>
+              </div>
+            </article>
+            <article class="produto">
+              <a class="produto-foto"><img class="sem-foto" alt=""></a>
+              <div class="produto-corpo">
+                <p class="produto-grupo">Doces</p>
+                <h3 class="produto-nome"><a href="#">Bolo de cenoura com cobertura</a></h3>
+                <p class="produto-resumo">Massa úmida de liquidificador e cobertura que endurece por cima.</p>
+                <div class="produto-acoes">
+                  <div class="produto-linha">
+                    <div class="porcoes"><button class="pbtn" disabled>−</button><output class="pval">12 <span>fatias</span></output><button class="pbtn">+</button></div>
+                    <div class="produto-preco"><p class="receita-preco"><b>R$ 22,40</b><span class="receita-preco-porcao">R$ 1,87 por fatia</span></p></div>
+                  </div>
+                  <button class="btn-add">Adicionar ao carrinho</button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <hr style="margin:48px 0;border:none;border-top:2px dashed var(--line-strong)">
+
+    <!-- ===================== RECEITA ===================== -->
+    <article>
+      <div class="hero">
+        <img class="sem-foto" alt="">
+        <div class="hero-txt">
+          <span class="eyebrow">Doces</span>
+          <h1>Bolo de Cenoura com Cobertura</h1>
+          <p class="resumo">Massa úmida de liquidificador e cobertura que endurece por cima.</p>
+        </div>
+      </div>
+      <dl class="meta">
+        <div class="meta-porcoes"><dt>Porções</dt><dd><div class="porcoes"><button class="pbtn">−</button><output class="pval">12 <span>fatias</span></output><button class="pbtn">+</button></div></dd></div>
+        <div><dt>Tempo de preparo</dt><dd>1 <span>h 10 min</span></dd></div>
+        <div><dt>Dificuldade</dt><dd>Fácil</dd></div>
+        <div><dt>Rendimento</dt><dd><span>Forma de furo central 24 cm</span></dd></div>
+        <div class="meta-add"><dd><button class="btn-add">Adicionar ao carrinho</button></dd></div>
+      </dl>
+      <div class="wrap">
+        <div class="col-left">
+          <section class="card">
+            <h2>Ingredientes</h2>
+            <p class="ing-dica">Clique no nome para escolher o produto, ou na medida para trocar a unidade.</p>
+            <ul class="ing">
+              <li><button class="ing-nome">farinha de trigo <span class="nota">(300 g)</span></button><button class="qty conv">2 ½ copos</button><span class="ing-preco">R$ 2,00</span></li>
+              <li><button class="ing-nome">açúcar <span class="ing-marca">União</span></button><button class="qty conv trocada">360 g</button><span class="ing-preco">R$ 1,44</span></li>
+              <li class="ing-aviso"><button class="ing-nome">manteiga sem sal <span class="ing-marca">Président</span></button><span class="qty">100 g</span><span class="ing-preco sem-preco">???</span></li>
+              <li><span class="ing-nome">sal <span class="nota">(a gosto)</span></span><span class="qty">a gosto</span><span class="ing-preco"></span></li>
+            </ul>
+            <dl class="custo">
+              <div><dt>Custo estimado</dt><dd>R$ 22,40</dd></div>
+              <div><dt>Por fatia</dt><dd>R$ 1,87</dd></div>
+            </dl>
+            <p class="ing-nota-preco">Preços do produto mais barato do catálogo, para a quantidade acima. São valores de teste.</p>
+          </section>
+          <section class="card card-nutri">
+            <h2>Nutrientes por porção</h2>
+            <ul class="nutri">
+              <li class="nutri-destaque"><span>Calorias</span><b>312 <em>kcal</em></b></li>
+              <li><span>Proteína</span><b>5 <em>g</em></b></li>
+              <li><span>Carbo.</span><b>42 <em>g</em></b></li>
+              <li><span>Gordura</span><b>14 <em>g</em></b></li>
+              <li><span>Fibra</span><b>2 <em>g</em></b></li>
+              <li><span>Sódio</span><b>180 <em>mg</em></b></li>
+            </ul>
+            <button class="nutri-mais">Ver de onde vêm as calorias</button>
+            <p class="nutri-nota">Estimativa sobre os ingredientes crus, a partir de tabelas de referência.</p>
+          </section>
+          <section class="card">
+            <h2>Utensílios</h2>
+            <ul class="ut"><li>Liquidificador</li><li>Forma de furo central</li></ul>
+          </section>
+        </div>
+        <div>
+          <section>
+            <h2 class="section">Modo de preparo</h2>
+            <p class="section-note">3 etapas · 25 min de preparo + 45 min de forno</p>
+            <ol class="steps">
+              <li><h3>Bata a massa</h3><p>No liquidificador, bata as cenouras, os ovos e o óleo até ficar liso.</p><div class="tip"><b>Dica:</b> o ponto é de creme homogêneo.</div></li>
+              <li><h3>Asse</h3><p>Despeje na forma untada e leve ao forno pré-aquecido por 45 minutos.</p></li>
+              <li><h3>Cobertura</h3><p>Ferva o chocolate com o leite e derrame ainda quente por cima.</p></li>
+            </ol>
+          </section>
+        </div>
+      </div>
+    </article>
+
+    <hr style="margin:48px 0;border:none;border-top:2px dashed var(--line-strong)">
+
+    <!-- ===================== CARRINHO / COMPRA ===================== -->
+    <div class="area">
+      <header class="area-head">
+        <p class="eyebrow-escuro">Lista de compras · passo 2 de 3</p>
+        <h1>Revise a compra</h1>
+        <ol class="passos">
+          <li class="passo-feito"><a href="#"><span class="passo-num">1</span><span class="passo-rotulo">Receitas</span></a></li>
+          <li class="passo-atual"><span class="passo-num">2</span><span class="passo-rotulo">Compra</span></li>
+          <li class="passo-adiante"><a href="#"><span class="passo-num">3</span><span class="passo-rotulo">Imprimir</span></a></li>
+        </ol>
+      </header>
+      <p class="compra-legenda"><span class="compra-chave verde">1 item já está em casa</span><span class="compra-chave amarela">1 escolha não é vendida aqui</span></p>
+      <ul class="compra-lista">
+        <li class="compra-linha">
+          <label class="compra-tenho"><input type="checkbox"></label>
+          <button class="compra-item">
+            <span class="compra-nome">Carne moída (400 g) <em class="ing-marca">Friboi</em><small>carne moída · Feijoada</small></span>
+            <span class="compra-precisa">450 g<small>precisa</small></span>
+            <span class="compra-emb">1<small>embalagem</small></span>
+            <span class="compra-preco">R$ 18,90<small>sobra 50 g</small></span>
+          </button>
+        </li>
+        <li class="compra-linha tenho">
+          <label class="compra-tenho"><input type="checkbox" checked></label>
+          <button class="compra-item">
+            <span class="compra-nome">Farinha de trigo (1 kg) <em class="ing-marca">Dona Benta</em><small>farinha de trigo · Bolo</small></span>
+            <span class="compra-precisa">300 g<small>precisa</small></span>
+            <span class="compra-emb">1<small>embalagem</small></span>
+            <span class="compra-preco">R$ 6,49<small>sobra 700 g</small></span>
+          </button>
+        </li>
+      </ul>
+      <dl class="compra-total">
+        <div><dt>Refeições</dt><dd>R$ 42,10</dd><p>o que as receitas consomem</p></div>
+        <div class="compra-total-forte"><dt>Compra</dt><dd>R$ 126,45</dd><p>embalagens inteiras, no caixa</p></div>
+        <div><dt>Sobra</dt><dd>R$ 19,35</dd><p>fica no armário para a próxima</p></div>
+        <div><dt>Já tenho</dt><dd>R$ 6,49</dd><p>não entra na compra de hoje</p></div>
+      </dl>
+      <div class="cart-rodape"><a class="btn-texto" href="#">Voltar às receitas</a><a class="btn-primario" href="#">Imprimir a lista</a></div>
+    </div>
+
+    <hr style="margin:48px 0;border:none;border-top:2px dashed var(--line-strong)">
+
+    <!-- ===================== JANELA DE PRODUTO (moldura) ===================== -->
+    <div style="max-width:560px;margin:0 auto;box-shadow:var(--shadow-lg);border-radius:var(--radius-lg);background:var(--paper)">
+      <div class="pref-form">
+        <header class="pref-head"><h2>carne moída</h2><button class="pref-fechar">✕</button></header>
+        <p class="pref-ajuda">A compra soma 450 g. Escolher um produto muda quantas embalagens você leva e o total da compra.</p>
+        <label class="prod-ordem"><span>Ordenar por</span><select><option>Usados há pouco</option></select></label>
+        <ul class="prod-lista">
+          <li><button class="prod prod-auto"><span class="prod-nome">Deixar o site escolher</span><span class="prod-dados">Sempre o mais barato por medida — hoje, Carne Moída Zaffari</span></button></li>
+          <li><button class="prod marcada"><span class="prod-nome">Carne Moída Patinho <span class="prod-selo">mais barato</span></span><span class="prod-linha">R$ 18,90</span><span class="prod-dados">Zaffari · 400 g · R$ 18,90 · R$ 47,25/kg</span><span class="prod-legenda">1 embalagem</span></button></li>
+          <li><button class="prod"><span class="prod-nome">Carne Moída Acém <span class="prod-selo recente">usado por último</span></span><span class="prod-linha">R$ 20,90</span><span class="prod-dados">Carrefour · 500 g · R$ 20,90 · R$ 41,80/kg</span><span class="prod-legenda">1 embalagem</span></button></li>
+        </ul>
+        <footer class="pref-foot"><span></span><button class="pref-ok">Pronto</button></footer>
+      </div>
+    </div>
+  </main>
+</div>
+
+<nav class="tabbar">
+  <a class="tab-link area-link" aria-current="page" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M9.5 20v-6h5v6"/></svg><span>Início</span></a>
+  <a class="tab-link area-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.5h2.2l2.3 10.8a1.6 1.6 0 0 0 1.6 1.2h8.1a1.6 1.6 0 0 0 1.6-1.2L20.6 8H6"/><circle cx="9.5" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/></svg><span>Carrinho</span><span class="cart-badge">3</span></a>
+  <a class="tab-link area-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9z"/><path d="M9 12h6M9 16h4"/></svg><span>Lista</span></a>
+  <button class="tab-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2-1.5-2-3.4-2.4.9a7.6 7.6 0 0 0-1.7-1L15 2.6h-4l-.3 2.4a7.6 7.6 0 0 0-1.7 1L6.6 5.1l-2 3.4L6.6 10a7.6 7.6 0 0 0 0 2l-2 1.5 2 3.4 2.4-.9a7.6 7.6 0 0 0 1.7 1l.3 2.4h4l.3-2.4a7.6 7.6 0 0 0 1.7-1l2.4.9 2-3.4z"/></svg><span>Ajustes</span></button>
+</nav>
+
+</body>
+</html>

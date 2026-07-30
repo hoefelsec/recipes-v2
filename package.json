@@ -1,0 +1,15 @@
+{
+  "name": "caderno-de-receitas",
+  "version": "1.0.0",
+  "description": "Site estático de receitas com ajuste de porções, troca de medidas e lista de compras",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "npx --yes serve .",
+    "test": "node tests/run.mjs",
+    "test:verbose": "node tests/run.mjs --verbose"
+  },
+  "devDependencies": {
+    "jsdom": "^30.0.0"
+  }
+}

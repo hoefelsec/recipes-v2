@@ -1,0 +1,91 @@
+/* Design tokens — paleta "Chef": verdes frescos, laranja suave, creme e neutros.
+   Alterar uma cor aqui muda o site inteiro.
+
+   A referência visual pede uma cara limpa e moderna: muito espaço em branco,
+   cartões de bordas suaves com sombra leve, e o verde como cor de ação. */
+
+:root {
+  /* --- Paleta base (da referência) --- */
+  --verde-fresco: #6CBF7D;   /* verde claro, destaques e realces */
+  --verde-escuro: #2E7D32;   /* verde escuro: ação, títulos, marca */
+  --verde-escuro-2: #256628; /* hover do verde de ação */
+  --laranja: #FFB74D;        /* laranja suave: acento secundário */
+  --laranja-2: #F59E1B;      /* laranja mais firme, para texto sobre claro */
+  --creme: #FFF7ED;          /* fundo quente da página */
+  --cinza-claro: #F2F2F2;    /* superfícies e traços */
+  --cinza-escuro: #333333;   /* texto principal */
+
+  /* --- Superfícies e tinta --- */
+  --bg: #F6F8F5;             /* fundo geral, um verde-acinzentado bem lavado */
+  --paper: #FFFFFF;          /* cartões e painéis */
+  --paper-2: #FBFDFB;        /* variação sutil */
+  --wash-verde: #EAF6EC;     /* realce verde bem claro */
+  --wash-laranja: #FFF3E0;   /* realce laranja bem claro */
+
+  --ink: #2B2F2C;            /* títulos */
+  --ink-body: #414744;       /* corpo */
+  --ink-soft: #6B726E;       /* auxiliar */
+  --ink-faint: #9AA19C;      /* fraco, legendas */
+
+  --line: #E7ECE6;           /* traço suave */
+  --line-strong: #D6DED4;    /* traço mais firme */
+  --hover: #F0F5EF;          /* fundo de hover neutro */
+  --chip: #EEF4EC;           /* fundo de chip/pílula */
+
+  /* --- Marca e ação --- */
+  --brand: var(--verde-escuro);
+  --brand-soft: var(--verde-fresco);
+  --accent: var(--laranja);
+
+  /* --- Cores legadas usadas em linha pelo JS (nutrição) ---
+     recipe-view.js pinta a rosca e as barras com estas variáveis. Mantidas com o
+     mesmo nome, remapeadas para a paleta Chef: proteína no verde escuro,
+     carboidrato no verde fresco, gordura no laranja. */
+  --terracotta: #2E7D32;     /* proteína */
+  --terracotta-dk: #2E7D32;  /* barras genéricas (kcal, fibra, sódio) */
+  --olive: #6CBF7D;          /* carboidrato */
+  --amber: #FFB74D;          /* gordura */
+
+  /* --- Estados (avisos de mercado, "já tenho") --- */
+  /* verde: já está em casa / disponível */
+  --verde: #2E7D32;
+  --verde-wash: #E8F5E9;
+  /* vermelho: defeito — "aqui não tem nada que sirva" */
+  --vermelho: #C62828;
+  --vermelho-wash: #FDECEA;
+  /* amarelo: aviso — "escolha outra coisa" (puxado ao laranja da paleta) */
+  --amarelo: #B26A00;
+  --amarelo-wash: #FFF3E0;
+
+  /* --- Tipografia --- */
+  --font-display: Poppins, "Segoe UI", system-ui, sans-serif;   /* marca e títulos */
+  --font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+
+  /* --- Formas --- */
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 22px;
+  --radius-pill: 100px;
+
+  /* --- Layout --- */
+  --sidebar-w: 248px;        /* menu lateral no desktop */
+  --content-max: 1200px;
+  --gutter: 40px;            /* respiro lateral no desktop */
+  --gutter-mobile: 16px;
+  --filtros-w: 236px;        /* coluna dos filtros na lista de receitas */
+  --cabecalho-h: 68px;       /* altura da barra superior (busca + mercado) */
+  --tabbar-h: 62px;          /* barra inferior no celular */
+
+  /* Rótulo miúdo de controle ("PORÇÕES"): uma linha e o respiro abaixo. */
+  --rotulo-linha: 15px;
+  --rotulo-respiro: 6px;
+
+  /* --- Sombras (suaves, como pede a referência) --- */
+  --shadow-xs: 0 1px 2px rgba(31, 45, 33, .05);
+  --shadow: 0 1px 3px rgba(31, 45, 33, .05), 0 6px 18px rgba(31, 45, 33, .06);
+  --shadow-md: 0 2px 6px rgba(31, 45, 33, .06), 0 12px 30px rgba(31, 45, 33, .09);
+  --shadow-lg: 0 20px 60px rgba(20, 40, 24, .18);
+  --shadow-brand: 0 8px 20px rgba(46, 125, 50, .28);
+
+  --ease: cubic-bezier(.32, .72, 0, 1);
+}
