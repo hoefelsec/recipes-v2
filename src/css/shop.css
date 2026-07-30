@@ -3,19 +3,7 @@
 
 /* ===================================================== lista de receitas === */
 
-/* Quando há painel de filtros, a área vira duas colunas: filtros | receitas. */
-.area:has(.area-lista) {
-  display: grid;
-  grid-template-columns: var(--filtros-w) minmax(0, 1fr);
-  grid-template-areas:
-    "head head"
-    "filtros lista";
-  column-gap: 30px;
-  align-items: start;
-}
-.area:has(.area-lista) > .area-head { grid-area: head; }
-.filtros-caixa { grid-area: filtros; }
-.area-lista { grid-area: lista; }
+.area-lista { width: 100%; }
 
 .vitrine-secao { margin-bottom: 30px; }
 .vitrine-titulo {
@@ -76,45 +64,6 @@
   text-align: center;
   color: var(--ink-soft);
 }
-
-/* ===================================================== filtros ============= */
-
-.filtros-caixa { position: sticky; top: calc(var(--cabecalho-h) + 18px); }
-.filtros-abrir { display: none; }   /* no desktop o painel fica sempre aberto */
-
-.filtros {
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 18px 18px 20px;
-}
-.filtros-topo { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-.filtros-topo h2 { font-size: 1.02rem; }
-.filtro-grupo { border: none; padding: 14px 0 0; margin: 0; border-top: 1px solid var(--line); }
-.filtros-topo + .filtro-grupo { border-top: none; padding-top: 0; }
-.filtro-grupo legend {
-  font-size: .74rem;
-  text-transform: uppercase;
-  letter-spacing: .05em;
-  color: var(--ink-faint);
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-.filtro-opcao {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 6px 0;
-  cursor: pointer;
-}
-.filtro-opcao input { width: 17px; height: 17px; accent-color: var(--verde-escuro); flex: none; }
-.filtro-opcao span { flex: 1; font-size: .92rem; }
-.filtro-opcao em { font-style: normal; font-size: .78rem; color: var(--ink-faint); background: var(--chip); border-radius: var(--radius-pill); padding: 1px 8px; }
-.filtro-barra { width: 100%; accent-color: var(--verde-escuro); margin: 4px 0; }
-.filtro-valor { font-size: .84rem; color: var(--ink-body); }
-.filtro-valor strong { color: var(--verde-escuro); }
-.filtro-nota { font-size: .78rem; color: var(--ink-faint); margin-top: 6px; line-height: 1.45; }
 
 /* ===================================================== carrinho: passos ==== */
 
