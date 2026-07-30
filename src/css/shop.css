@@ -374,9 +374,10 @@ button.compra-item { cursor: pointer; }
   color: var(--vermelho);
 }
 
-/* Rodapé com os botões de escolher (abaixo do total) */
+/* Rodapé com o selo "melhor opção" e os botões de escolher (abaixo do total) */
 .mc-acoes td { border-top: none; text-align: center; padding: 6px 10px 14px; }
 .mc-acao.melhor { background: var(--wash-verde); }
+.mc-acao .mc-selo { display: block; margin: 0 auto 7px; width: fit-content; }
 
 /* Nome do ingrediente: clicável, abre os produtos */
 .mc-ing-btn {
@@ -393,7 +394,8 @@ button.compra-item { cursor: pointer; }
 }
 .mc-ing-nome { font-weight: 600; color: var(--verde-escuro); }
 .mc-ing-btn:hover .mc-ing-nome { text-decoration: underline; text-underline-offset: 3px; }
-.mc-ing-btn small { color: var(--ink-faint); font-size: .76rem; }
+/* Quantidade ao lado do nome (só no ingrediente genérico) */
+.mc-ing-qtd { font-weight: 400; color: var(--ink-faint); font-size: .82rem; margin-left: 6px; }
 
 /* Célula de preço: clicável, abre os produtos daquele mercado */
 .mc-cel-btn {
@@ -432,16 +434,22 @@ button.compra-item { cursor: pointer; }
 .mcp-nome { font-weight: 600; color: var(--ink); }
 .mcp-nome em { font-style: normal; color: var(--ink-faint); font-weight: 500; }
 .mcp-emb { font-size: .8rem; color: var(--ink-soft); }
-.mcp-precos { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
-.mcp-badge {
-  font-size: .76rem;
-  background: var(--chip);
-  color: var(--ink-body);
-  border-radius: var(--radius-pill);
-  padding: 3px 10px;
-  white-space: nowrap;
+/* Preços por mercado como tabela de 2 colunas (mercado · preço), do mais barato ao mais caro */
+.mcp-precos {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 3px 14px;
+  align-items: baseline;
+  flex: none;
 }
-.mcp-badge b { color: var(--verde-escuro); }
+.mcp-mkt { font-size: .8rem; color: var(--ink-soft); white-space: nowrap; }
+.mcp-val {
+  font-size: .84rem;
+  font-weight: 700;
+  color: var(--verde-escuro);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
 .mcp-generico .mcp-nome { color: var(--verde-escuro); }
 
 /* ===================================================== folha de compras ==== */

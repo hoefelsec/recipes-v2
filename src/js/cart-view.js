@@ -470,7 +470,6 @@ function colunaMercado(m, ativo, melhor) {
         <img class="mc-logo" src="${esc(m.logo)}" alt="" onerror="this.remove()">
         <b>${esc(m.nome)}</b>
       </span>
-      ${m.id === melhor ? `<span class="mc-selo">melhor opção</span>` : ""}
     </th>`;
 }
 
@@ -517,17 +516,21 @@ function mercadoHTML(comp, ativo) {
   const { mercados, linhas, matriz, totais, melhor } = comp;
 
   const corpo = linhas.map(l => {
-    const contexto = [textoPrecisa(l.precisa), l.escolhidoNome].filter(Boolean).join(" · ");
+    const fixado = Boolean(l.escolhidoNome);
+    // Com produto fixado, o nome do produto SUBSTITUI o do ingrediente e a quantidade
+    // some (a embalagem já diz o que se leva). Genérico mostra a quantidade ao lado.
+    const titulo = fixado
+      ? esc(l.escolhidoNome)
+      : `${esc(l.ing.nome)} <small class="mc-ing-qtd">${esc(textoPrecisa(l.precisa))}</small>`;
     const celulas = mercados
       .map(m => celulaMercado(matriz.get(l.chave).get(m.id), l.ing.id, m.id, m.id === melhor))
       .join("");
     return `
       <tr>
         <th scope="row" class="mc-ing">
-          <button type="button" class="mc-ing-btn" data-ing-produtos="${esc(l.ing.id)}"
-                  title="Escolher o produto deste ingrediente">
-            <span class="mc-ing-nome">${esc(l.ing.nome)}</span>
-            <small>${esc(contexto)}</small>
+          <button type="button" class="mc-ing-btn${fixado ? " fixado" : ""}" data-ing-produtos="${esc(l.ing.id)}"
+                  title="${fixado ? "Trocar o produto fixado" : "Escolher o produto deste ingrediente"}">
+            <span class="mc-ing-nome">${titulo}</span>
           </button>
         </th>
         ${celulas}
@@ -543,7 +546,10 @@ function mercadoHTML(comp, ativo) {
   }).join("");
 
   const acoesRow = mercados
-    .map(m => `<td class="mc-acao${m.id === melhor ? " melhor" : ""}">${escolherMercadoBtn(m, ativo)}</td>`)
+    .map(m => `<td class="mc-acao${m.id === melhor ? " melhor" : ""}">
+      ${m.id === melhor ? `<span class="mc-selo">melhor opção</span>` : ""}
+      ${escolherMercadoBtn(m, ativo)}
+    </td>`)
     .join("");
 
   return `
@@ -599,9 +605,17 @@ function produtosDialogoHTML(ing, mercadoId, escolhidoId) {
 
   const item = p => {
     const ondes = mercadoId ? [mercadoId] : mercadosDe(p.id);
-    const badges = ondes.map(mid =>
-      `<span class="mcp-badge">${esc(mercadoPorId(mid)?.nome ?? mid)} <b>${esc(formatarPreco(preco(mid, p.id)))}</b></span>`
-    ).join("");
+    // Duas colunas — mercado e preço — do mais barato ao mais caro
+    const precos = ondes
+      .map(mid => ({ mid, valor: preco(mid, p.id) }))
+      .filter(x => x.valor != null)
+      .sort((a, b) => a.valor - b.valor);
+
+    const tabela = precos.length
+      ? precos.map(x => `
+          <span class="mcp-mkt">${esc(mercadoPorId(x.mid)?.nome ?? x.mid)}</span>
+          <span class="mcp-val">${esc(formatarPreco(x.valor))}</span>`).join("")
+      : `<span class="mcp-mkt">sem preço</span><span class="mcp-val">—</span>`;
 
     return `
       <button type="button" class="mcp-item${p.id === escolhidoId ? " marcada" : ""}" data-lock="${esc(p.id)}">
@@ -609,7 +623,7 @@ function produtosDialogoHTML(ing, mercadoId, escolhidoId) {
           <span class="mcp-nome">${esc(p.nome)}${p.marca ? ` <em>· ${esc(p.marca)}</em>` : ""}</span>
           <span class="mcp-emb">${esc(textoEmbalagem(p))}</span>
         </span>
-        <span class="mcp-precos">${badges || '<span class="mcp-badge">sem preço</span>'}</span>
+        <span class="mcp-precos">${tabela}</span>
       </button>`;
   };
 
