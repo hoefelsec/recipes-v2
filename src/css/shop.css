@@ -391,13 +391,25 @@ button.compra-item { cursor: pointer; }
 .mc-acoes td { border-top: none; text-align: center; padding: 6px 10px 14px; }
 .mc-acao.melhor { background: var(--wash-verde); }
 
+/* Caixa "já tenho em casa" ao lado do nome */
+.mc-tenho {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  margin-right: 10px;
+  cursor: pointer;
+}
+.mc-tenho input { width: 18px; height: 18px; accent-color: var(--verde-escuro); }
+
+/* Linha marcada como já disponível: apagada e riscada, fora do total */
+.mc-linha-tenho { opacity: .5; }
+.mc-linha-tenho .mc-ing-nome { text-decoration: line-through; text-decoration-color: var(--ink-faint); }
+
 /* Nome do ingrediente: clicável, abre os produtos */
 .mc-ing-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1px;
-  width: 100%;
+  display: inline-flex;
+  align-items: baseline;
+  vertical-align: middle;
   background: none;
   border: none;
   padding: 0;

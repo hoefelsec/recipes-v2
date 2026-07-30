@@ -14,6 +14,7 @@
 import { mercados } from "../data/mercados.js";
 import { produtosDe } from "../data/produtos.js";
 import { itensDaCompra, embalagensPara } from "./purchase.js";
+import { carregarTenho } from "./choices.js";
 
 /**
  * Entre os produtos dados, o mais barato para cobrir `precisa` em embalagens
@@ -86,11 +87,14 @@ export function comparativoDeMercado(itens, escolhas = {}) {
 
   // Necessidade + produto escolhido por linha, sem filtrar por mercado
   const { linhas: linhasCompra, deFora } = itensDaCompra(itens, escolhas, null);
+  const tenho = carregarTenho();
 
   const linhas = linhasCompra.map(l => ({
     ing: l.ing,
     precisa: l.precisa,
     chave: l.chave,
+    // Marcado como já disponível em casa: continua na tabela, mas fora do total
+    tenho: tenho.has(l.chave),
     // origem "automatico" = o site escolheu; qualquer outra = o leitor escolheu
     escolhidoId: l.origem === "automatico" ? null : (l.produto?.id ?? null),
     escolhidoNome: l.origem === "automatico" || !l.produto
@@ -107,6 +111,9 @@ export function comparativoDeMercado(itens, escolhas = {}) {
     for (const m of listaMercados) {
       const c = celula(l, m.id);
       porMercado.set(m.id, c);
+
+      // "Já tenho em casa" sai da conta — nem soma preço nem conta como falta
+      if (l.tenho) continue;
 
       const t = totais.get(m.id);
       if (c.valor != null) { t.valor += c.valor; t.temValor = true; }

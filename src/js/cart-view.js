@@ -533,8 +533,12 @@ function mercadoHTML(comp, ativo) {
       .map(m => celulaMercado(matriz.get(l.chave).get(m.id), l.ing.id, m.id, m.id === melhor))
       .join("");
     return `
-      <tr>
+      <tr class="${l.tenho ? "mc-linha-tenho" : ""}">
         <th scope="row" class="mc-ing">
+          <label class="mc-tenho" title="Já tenho em casa — fora da conta">
+            <input type="checkbox" data-tenho="${esc(l.chave)}" ${l.tenho ? "checked" : ""}>
+            <span class="sr-only">Já tenho ${esc(l.ing.nome)} em casa</span>
+          </label>
           <button type="button" class="mc-ing-btn${fixado ? " fixado" : ""}" data-ing-produtos="${esc(l.ing.id)}"
                   title="${fixado ? "Trocar o produto fixado" : "Escolher o produto deste ingrediente"}">
             <span class="mc-ing-nome">${titulo}</span>
@@ -562,6 +566,7 @@ function mercadoHTML(comp, ativo) {
       embalagens inteiras. Onde você fixou um produto, é o preço dele. Clique no
       ingrediente para trocar o produto, num preço para ver os produtos daquele
       mercado, e escolha um mercado no rodapé para seguir para a compra.
+      Marque a caixa do que já tem em casa para tirá-lo da conta.
     </p>
 
     <div class="mc-wrap">
