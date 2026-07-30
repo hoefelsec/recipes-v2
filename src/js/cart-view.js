@@ -39,15 +39,13 @@ import { comparativoDeMercado } from "./market-compare.js";
 export const PASSOS = [
   { numero: 1, rotulo: "Receitas", titulo: "Revise as receitas", url: "#/carrinho" },
   { numero: 2, rotulo: "Mercado", titulo: "Escolha o mercado", url: "#/carrinho?passo=2" },
-  { numero: 3, rotulo: "Compra", titulo: "Revise a compra", url: "#/carrinho?passo=3" },
-  { numero: 4, rotulo: "Imprimir", titulo: "Folha de compras", url: "#/lista" }
+  { numero: 3, rotulo: "Imprimir", titulo: "Folha de compras", url: "#/lista" }
 ];
 
-/** O passo pedido na URL, dentro dos limites do carrinho (1 a 3). O 4º é outra rota. */
+/** O passo pedido na URL, dentro dos limites do carrinho (1 ou 2). O 3º é outra rota. */
 export const passoValido = valor => {
   const n = Number(valor);
-  if (!Number.isFinite(n)) return 1;
-  return Math.min(3, Math.max(1, Math.round(n)));
+  return Number.isFinite(n) && n >= 2 ? 2 : 1;
 };
 
 const dataAttrs = dados =>
@@ -754,28 +752,23 @@ export function renderizarCarrinho(alvo, { passo = 1 } = {}) {
          <ul class="cart-lista">${itens
            .map((it, i) => linhaReceita(it, compra.porItem[i], abertas.has(it.chave), escolhas, mercado))
            .join("")}</ul>`;
-    } else if (atual === 2) {
+    } else {
       const comp = comparativoDeMercado(itens, escolhas);
       corpo = comp.linhas.length
         ? mercadoHTML(comp, mercado)
         : `<p class="area-sub">Nada para comparar entre os mercados.</p>`;
-    } else {
-      corpo = compra.contados ? compraHTML(compra) : `<p class="area-sub">Nada para comprar.</p>`;
     }
 
     const rodape = atual === 1
       ? `<button type="button" class="btn-texto" id="limpar-carrinho">Limpar carrinho</button>
          <a class="btn-primario" href="#/carrinho?passo=2">Escolher mercado</a>`
-      : atual === 2
-        ? `<a class="btn-texto" href="#/carrinho">Voltar às receitas</a>
-           <a class="btn-primario" href="#/carrinho?passo=3">Continuar para a compra</a>`
-        : `<a class="btn-texto" href="#/carrinho?passo=2">Voltar ao mercado</a>
-           <a class="btn-primario" id="ir-imprimir" href="#/lista?imprimir=1">Imprimir a lista</a>`;
+      : `<a class="btn-texto" href="#/carrinho">Voltar às receitas</a>
+         <a class="btn-primario" href="#/lista">Gerar lista de compras</a>`;
 
     alvo.innerHTML = `
       <div class="area">
         <header class="area-head">
-          <p class="eyebrow-escuro">Lista de compras · passo ${atual} de 4</p>
+          <p class="eyebrow-escuro">Lista de compras · passo ${atual} de 3</p>
           <h1>${esc(info.titulo)}</h1>
           ${trilha(atual)}
         </header>
@@ -889,13 +882,15 @@ export function renderizarCarrinho(alvo, { passo = 1 } = {}) {
    * sincronia — o preço da receita, os totais, o próprio seletor. Depois troca o
    * passo para a compra.
    */
+  /* Selecionar um mercado apenas fixa a escolha (e destaca a coluna) — não avança
+     de página. Passa pelo seletor do cabeçalho para o `app.js` trocar o mercado
+     ativo e redesenhar tudo em sincronia. */
   function escolherMercado(id) {
     const sel = document.querySelector("#mercado-topo select");
     if (sel && sel.value !== id) {
       sel.value = id;
       sel.dispatchEvent(new Event("change", { bubbles: true }));
     }
-    if (window.location.hash !== "#/carrinho?passo=3") window.location.hash = "#/carrinho?passo=3";
   }
 
   /* Janela de produtos do comparativo: abre pelo nome do ingrediente (todos os
