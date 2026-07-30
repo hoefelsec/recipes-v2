@@ -499,9 +499,8 @@ function celulaMercado(c, ingId, mercadoId, melhor) {
     </td>`;
   }
 
-  const icone = c.estado === "errada" ? "fa-ban" : "fa-triangle-exclamation";
   return `<td class="${classe}" title="${esc(c.motivo ?? "")}">
-            <span class="mc-sem"><i class="fa-solid ${icone}" aria-hidden="true"></i></span>
+            <span class="mc-tag">indisponível</span>
           </td>`;
 }
 
@@ -590,9 +589,8 @@ function mercadoHTML(comp, ativo) {
     <p class="compra-nota">
       <i class="fa-solid fa-triangle-exclamation nota-amarela" aria-hidden="true"></i>
       amarelo: o produto que você fixou não é vendido ali — o preço é do mais barato que serve.
-      <i class="fa-solid fa-ban nota-vermelha" aria-hidden="true"></i>
-      vermelho: o mercado não vende nenhum produto para o ingrediente, e o total vira um piso.
-      Preços fictícios, para teste.
+      <span class="mc-tag nota-tag">indisponível</span>: o mercado não vende nenhum produto
+      para o ingrediente, e o total vira um piso. Preços fictícios, para teste.
     </p>`;
 }
 

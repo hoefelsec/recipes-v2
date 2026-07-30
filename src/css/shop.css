@@ -362,7 +362,18 @@ button.compra-item { cursor: pointer; }
 .mc-cel.alerta b { color: var(--amarelo); }
 .mc-cel.errada { background: var(--vermelho-wash); }
 .mc-icone { color: var(--amarelo); }
-.mc-sem { color: var(--vermelho); font-size: 1.05rem; }
+/* Marcador textual no lugar de ícone quando não há preço */
+.mc-tag {
+  display: inline-block;
+  font-size: .72rem;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  padding: 2px 10px;
+  white-space: nowrap;
+}
+.mc-cel.errada .mc-tag { color: var(--vermelho); background: color-mix(in srgb, var(--vermelho) 14%, transparent); }
+.mc-cel.alerta .mc-tag { color: var(--amarelo); background: color-mix(in srgb, var(--amarelo) 16%, transparent); }
+.nota-tag { color: var(--vermelho); background: color-mix(in srgb, var(--vermelho) 12%, transparent); }
 
 /* Total */
 .mc-total th, .mc-total td { border-top: 2px solid var(--line-strong); border-bottom: none; }
