@@ -21,9 +21,9 @@ export function stepperHTML({ valor, unidade = "", min, max, passo = 1, rotulo, 
 
   return `
     <div class="porcoes ${classe}" role="group" aria-label="${esc(rotulo)}">
-      ${botao(-passo, "−", `Diminuir ${rotulo.toLowerCase()}`, valor <= min)}
+      ${botao(-passo, '<i class="fa-solid fa-minus" aria-hidden="true"></i>', `Diminuir ${rotulo.toLowerCase()}`, valor <= min)}
       <output class="pval" aria-live="polite">${esc(String(valor))}${unidade ? ` <span>${esc(unidade)}</span>` : ""}</output>
-      ${botao(passo, "+", `Aumentar ${rotulo.toLowerCase()}`, valor >= max)}
+      ${botao(passo, '<i class="fa-solid fa-plus" aria-hidden="true"></i>', `Aumentar ${rotulo.toLowerCase()}`, valor >= max)}
     </div>`;
 }
 

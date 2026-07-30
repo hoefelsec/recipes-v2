@@ -1,97 +1,10 @@
 /* A casca de navegação do "Chef":
- *   - menu lateral fixo à esquerda (desktop)
- *   - barra superior com busca e mercado (todas as larguras)
- *   - barra de abas inferior (celular)
+ *   - barra superior com marca, busca, seções (Início/Listas/Carrinho) e controles
+ *   - barra de abas inferior (celular), quando a superior fica apertada
  *   - avisos passageiros (toast)
+ *
+ * Ícones são do FontAwesome (classes `fa-*`).
  */
-
-/* ------------------------------------------------------------ menu lateral */
-
-.sidebar {
-  position: sticky;
-  top: 0;
-  align-self: start;
-  height: 100vh;
-  background: var(--paper);
-  border-right: 1px solid var(--line);
-  display: flex;
-  flex-direction: column;
-  padding: 22px 16px;
-  gap: 6px;
-  z-index: 30;
-}
-
-.side-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  padding: 6px 10px 18px;
-  color: var(--verde-escuro);
-}
-.side-brand svg { width: 30px; height: 30px; flex: none; }
-.side-brand span {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.5rem;
-  letter-spacing: -.02em;
-  color: var(--verde-escuro);
-}
-
-.side-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.side-sep {
-  height: 1px;
-  background: var(--line);
-  margin: 12px 8px;
-  border: 0;
-}
-.side-foot { margin-top: auto; display: flex; flex-direction: column; gap: 4px; }
-
-.side-link {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 11px 14px;
-  border-radius: var(--radius-sm);
-  color: var(--ink-body);
-  text-decoration: none;
-  font-weight: 500;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-  transition: background .15s var(--ease), color .15s var(--ease);
-}
-.side-link svg { width: 21px; height: 21px; flex: none; opacity: .85; }
-.side-link:hover { background: var(--hover); color: var(--ink); }
-
-/* Item ativo: pílula verde clara, texto e ícone no verde escuro (como na referência) */
-.side-link.area-link[aria-current="page"] {
-  background: var(--wash-verde);
-  color: var(--verde-escuro);
-  font-weight: 600;
-}
-.side-link.area-link[aria-current="page"] svg { opacity: 1; }
-
-/* Badge do carrinho no menu lateral */
-.side-link .cart-badge {
-  margin-left: auto;
-  background: var(--verde-escuro);
-  color: #fff;
-  font-size: .74rem;
-  font-weight: 700;
-  min-width: 22px;
-  height: 22px;
-  padding: 0 6px;
-  border-radius: var(--radius-pill);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
 
 /* ------------------------------------------------------------ barra superior */
 
@@ -99,44 +12,42 @@
   position: sticky;
   top: 0;
   z-index: 20;
-  height: var(--cabecalho-h);
+  min-height: var(--cabecalho-h);
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 0 var(--gutter);
-  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  gap: 12px 16px;
+  padding: 10px var(--gutter);
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
   backdrop-filter: saturate(140%) blur(8px);
   border-bottom: 1px solid var(--line);
 }
 
-/* Marca compacta (aparece no celular, escondida no desktop pois o menu já a tem) */
 .brand-mark {
-  display: none;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   text-decoration: none;
   color: var(--verde-escuro);
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+  flex: none;
 }
-.brand-mark svg { width: 24px; height: 24px; }
+.brand-mark i { font-size: 1.15rem; }
 
 .busca {
   position: relative;
   flex: 1;
-  max-width: 460px;
+  min-width: 120px;
+  max-width: 440px;
   display: flex;
   align-items: center;
 }
-.busca::before {
-  content: "";
+.busca-icone {
   position: absolute;
   left: 15px;
-  width: 17px; height: 17px;
-  background: var(--ink-faint);
-  -webkit-mask: no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.3-4.3'/%3E%3C/svg%3E");
-  mask: no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.3-4.3'/%3E%3C/svg%3E");
+  color: var(--ink-faint);
+  font-size: .9rem;
   pointer-events: none;
 }
 .busca input {
@@ -144,7 +55,7 @@
   border: 1px solid var(--line-strong);
   background: var(--paper);
   border-radius: var(--radius-pill);
-  padding: 10px 16px 10px 40px;
+  padding: 10px 16px 10px 38px;
   color: var(--ink);
   transition: border-color .15s var(--ease), box-shadow .15s var(--ease);
 }
@@ -155,12 +66,64 @@
   box-shadow: 0 0 0 3px var(--wash-verde);
 }
 
+/* Navegação por seção (desktop). O `margin-left: auto` empurra a navegação e os
+   controles para a direita, deixando a busca com a folga do meio. */
+.topbar-nav { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+.topbar-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: var(--radius-pill);
+  color: var(--ink-body);
+  text-decoration: none;
+  font-weight: 500;
+  transition: background .15s var(--ease), color .15s var(--ease);
+}
+.topbar-link i { font-size: .95rem; opacity: .85; }
+.topbar-link:hover { background: var(--hover); color: var(--ink); }
+.topbar-link.area-link[aria-current="page"] {
+  background: var(--wash-verde);
+  color: var(--verde-escuro);
+  font-weight: 600;
+}
+.topbar-link.area-link[aria-current="page"] i { opacity: 1; }
+.topbar-link .cart-badge {
+  background: var(--verde-escuro);
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 700;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .topbar-acoes {
   margin-left: auto;
   display: flex;
   align-items: center;
   gap: 10px;
 }
+
+/* Botões redondos de ícone (preferências, ajuda) */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line-strong);
+  background: var(--paper);
+  color: var(--ink-body);
+  border-radius: 50%;
+  transition: background .15s var(--ease), color .15s var(--ease);
+}
+.icon-btn:hover { background: var(--hover); color: var(--verde-escuro); }
+.icon-btn i { font-size: 1rem; }
 
 /* Seletor de mercado */
 .mercado-seletor {
@@ -188,22 +151,6 @@
   cursor: pointer;
 }
 .mercado-seletor select:focus { outline: none; }
-
-/* Botão de preferências (engrenagem) */
-.btn-prefs {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid var(--line-strong);
-  background: var(--paper);
-  color: var(--ink-body);
-  border-radius: var(--radius-pill);
-  padding: 9px 14px;
-  font-weight: 500;
-  transition: background .15s var(--ease);
-}
-.btn-prefs:hover { background: var(--hover); }
-.btn-prefs svg { width: 18px; height: 18px; flex: none; }
 
 /* ------------------------------------------------------------ barra de abas (celular) */
 

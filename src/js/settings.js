@@ -244,7 +244,7 @@ export function iniciarPreferencias(aoMudar) {
     <div class="pref-form">
       <header class="pref-head">
         <h2>Preferências</h2>
-        <button type="button" class="pref-fechar" aria-label="Fechar preferências">✕</button>
+        <button type="button" class="pref-fechar" aria-label="Fechar preferências"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
       </header>
 
       ${grupoUnidade("peso", "Peso", "Como mostrar farinha, carne, açúcar…", prefs)}

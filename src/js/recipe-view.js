@@ -63,14 +63,14 @@ function seletorPorcoes(r, porcoes) {
   return `
     <div class="porcoes" role="group" aria-label="Número de porções">
       <button type="button" class="pbtn" data-passo="-1"
-              aria-label="Diminuir porções" ${porcoes <= min ? "disabled" : ""}>−</button>
+              aria-label="Diminuir porções" ${porcoes <= min ? "disabled" : ""}><i class="fa-solid fa-minus" aria-hidden="true"></i></button>
 
       <output class="pval" id="porcoes-valor" aria-live="polite">
         ${esc(String(porcoes))} <span>${esc(unidadePorcao(r, porcoes))}</span>
       </output>
 
       <button type="button" class="pbtn" data-passo="1"
-              aria-label="Aumentar porções" ${porcoes >= max ? "disabled" : ""}>+</button>
+              aria-label="Aumentar porções" ${porcoes >= max ? "disabled" : ""}><i class="fa-solid fa-plus" aria-hidden="true"></i></button>
     </div>`;
 }
 
@@ -464,7 +464,7 @@ function detalhesHTML(r, prefs) {
     <div class="pref-form">
       <header class="pref-head">
         <h2>Nutrientes por porção</h2>
-        <button type="button" class="pref-fechar" aria-label="Fechar detalhes">✕</button>
+        <button type="button" class="pref-fechar" aria-label="Fechar detalhes"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
       </header>
       <p class="nutri-dl-sub">${esc(r.nome)} · ${porcao} · ${Math.round(d.porPorcao.kcal)} kcal</p>
 

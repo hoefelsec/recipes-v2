@@ -67,7 +67,7 @@ export function janelaProdutos(ing, opcoes, {
     <div class="pref-form">
       <header class="pref-head">
         <h2>${esc(ing.nome)}</h2>
-        <button type="button" class="pref-fechar" aria-label="Fechar">✕</button>
+        <button type="button" class="pref-fechar" aria-label="Fechar"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
       </header>
 
       <p class="pref-ajuda">${compra

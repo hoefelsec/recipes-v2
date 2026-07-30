@@ -1,45 +1,31 @@
 /* Adaptações por largura de tela.
-   Base é desktop (menu lateral). Abaixo de 1000px vira app de celular:
-   menu lateral escondido, barra de abas embaixo, marca na barra superior. */
+   Base é desktop: barra superior com marca, busca, seções e controles.
+   Abaixo de 1000px a navegação por seção migra para a barra de abas inferior. */
 
-/* Coluna dos filtros um pouco menor em telas médias */
 @media (max-width: 1180px) {
   :root { --gutter: 28px; }
 }
 
 @media (max-width: 1000px) {
-  body {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "main";
-  }
-
-  .sidebar { display: none; }
   .tabbar { display: flex; }
-  .brand-mark { display: inline-flex; }
 
   main#conteudo {
     padding: 18px var(--gutter-mobile) calc(var(--tabbar-h) + 26px);
   }
 
-  /* No celular a barra empilha: marca + ações em cima, busca ocupando a linha toda
-     embaixo — como na tela inicial da referência. */
+  /* A barra superior empilha: marca + controles em cima, busca ocupando a linha
+     toda embaixo — como na tela inicial da referência. A navegação por seção
+     some daqui (a barra de abas assume). */
   .topbar {
-    height: auto;
-    min-height: var(--cabecalho-h);
     flex-wrap: wrap;
     padding: 10px var(--gutter-mobile);
     gap: 10px 12px;
   }
+  .topbar-nav { display: none; }
   .brand-mark { order: 0; }
-  .topbar-acoes { order: 1; margin-left: auto; gap: 8px; }
+  .topbar-acoes { order: 1; margin-left: auto; }
   .busca { order: 2; flex-basis: 100%; max-width: none; }
-  /* O logo do mercado cede espaço ao nome quando aperta */
   .mercado-logo { display: none; }
-  .btn-prefs-texto { display: none; }
-  .btn-prefs { padding: 9px 12px; }
-
-  /* A busca some no desktop-do-celular? Não: fica, mas divide a fileira */
-  .busca { max-width: none; }
 
   /* -------- receita: uma coluna -------- */
   .wrap { grid-template-columns: minmax(0, 1fr); }
@@ -105,7 +91,7 @@
   background: none;
   position: relative;
 }
-.tab-link svg { width: 23px; height: 23px; }
+.tab-link i { font-size: 1.15rem; }
 .tab-link.area-link[aria-current="page"] { color: var(--verde-escuro); font-weight: 600; }
 .tab-link .cart-badge {
   position: absolute;

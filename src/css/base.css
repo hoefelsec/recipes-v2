@@ -32,18 +32,10 @@ h1, h2, h3, h4 {
 }
 
 /* --------------------------------------------------------------- layout ----
-   No desktop: menu lateral fixo à esquerda + coluna de conteúdo à direita.
-   No celular: uma coluna, barra superior fixa e barra de abas inferior. */
+   Uma coluna só: barra superior fixa com a navegação, e o conteúdo abaixo.
+   No celular, uma barra de abas inferior complementa a navegação. */
 
-body {
-  display: grid;
-  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
-  grid-template-areas: "sidebar main";
-}
-
-.sidebar { grid-area: sidebar; }
 .app-main {
-  grid-area: main;
   min-width: 0;
   display: flex;
   flex-direction: column;
