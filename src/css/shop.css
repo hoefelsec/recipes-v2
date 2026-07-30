@@ -351,7 +351,10 @@ button.compra-item { cursor: pointer; }
 /* Linhas de ingrediente */
 .mc-ing { font-weight: 500; color: var(--ink); }
 
-/* Células */
+/* Células — centralizadas, para o preço alinhar com o nome do mercado no cabeçalho.
+   Precisa vencer `.mercado-tabela td { text-align: right }` (mesma especificidade),
+   daí o seletor mais específico. */
+.mercado-tabela .mc-cel { text-align: center; }
 .mc-cel { font-variant-numeric: tabular-nums; }
 .mc-cel b { font-weight: 600; color: var(--ink); }
 .mc-cel small { display: block; font-weight: 400; color: var(--ink-faint); font-size: .72rem; }
@@ -427,7 +430,9 @@ button.compra-item { cursor: pointer; }
 
 /* Célula de preço: o preço (clicável, abre os produtos) + o botão "+" que joga o
    item para a lista daquele mercado. */
-.mc-cel-wrap { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+/* O preço fica centralizado na célula (alinhado ao nome do mercado no cabeçalho);
+   o botão de seleção é posicionado à direita, sem empurrar o preço do centro. */
+.mc-cel-wrap { position: relative; }
 .mc-cel-btn {
   display: inline-flex;
   align-items: center;
@@ -441,7 +446,10 @@ button.compra-item { cursor: pointer; }
 }
 .mc-cel-btn:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .mc-add {
-  flex: none;
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
   width: 26px; height: 26px;
   border-radius: 50%;
   border: 1px solid var(--verde-fresco);

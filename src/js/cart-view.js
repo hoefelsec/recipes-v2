@@ -492,7 +492,7 @@ function celulaMercado(c, chave, ingId, mercadoId, melhor) {
         </button>
         <button type="button" class="mc-add" data-atribuir="${esc(chave)}" data-mercado="${esc(mercadoId)}"
                 title="Comprar neste mercado" aria-label="Comprar neste mercado">
-          <i class="fa-solid fa-plus" aria-hidden="true"></i>
+          <i class="fa-solid fa-check" aria-hidden="true"></i>
         </button>
       </div>
     </td>`;
@@ -625,10 +625,10 @@ function mercadoHTML(comp) {
 
   return `
     <p class="compra-dica">
-      Para cada ingrediente, clique no <b>+</b> do mercado onde vai comprá-lo — ou use
-      “Comprar tudo aqui” para levar tudo o que um mercado tem. O item vai para a lista
-      daquele mercado, abaixo. Marque o que já tem em casa. Você avança quando todos os
-      ingredientes estiverem numa lista.
+      Para cada ingrediente, selecione o mercado onde vai comprá-lo (botão <b>✓</b> na
+      célula do preço) — ou use “Comprar tudo aqui” para levar tudo o que um mercado
+      tem. O item vai para a lista daquele mercado, abaixo. Marque o que já tem em casa.
+      Você avança quando todos os ingredientes estiverem numa lista.
     </p>
 
     ${tabelaPrincipal}

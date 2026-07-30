@@ -5,8 +5,7 @@ import { porSlug } from "../data/index.js";
 import { $, abrirDialogo, ligarFechamento } from "./dom.js";
 import { aoTrocarRota, porcoesAtual, definirPorcoesNaUrl } from "./router.js";
 import { iniciarCabecalho, marcarArea, termoDaBusca } from "./header.js";
-import { iniciarPreferencias, mercadoAtivo, definirMercado } from "./settings.js";
-import { seletorDeMercado } from "./ui.js";
+import { iniciarPreferencias } from "./settings.js";
 import { renderizarReceita } from "./recipe-view.js";
 import { renderizarVitrine } from "./shop-view.js";
 import { renderizarCarrinho } from "./cart-view.js";
@@ -24,26 +23,21 @@ iniciarCabecalho({
   aoBuscar: () => { if (document.body.dataset.area === "comprar") redesenharArea(); },
   irParaLista: () => { window.location.hash = "#/comprar"; }
 });
-iniciarSeletorDeMercado();
 iniciarAtalhosDaCasca();
 atualizarBadge();
 carrinho.inscrever(atualizarBadge);
 
 /**
- * Os atalhos do menu lateral e da barra de abas.
+ * Os atalhos da casca: preferências (em vários lugares) e a janela de ajuda.
  *
- * "Configurações" (em vários lugares) delega ao botão real de preferências, que é
- * único — quem monta o painel é `settings.js`, ligado a `#abrir-prefs`. "Mercados"
- * leva o foco ao seletor da barra superior, e "Ajuda" abre a janela de apresentação.
+ * "Preferências" delega ao botão real, único — quem monta o painel é `settings.js`,
+ * ligado a `#abrir-prefs`. Não há mais seletor de mercado no cabeçalho: a escolha de
+ * mercado acontece só na página de montagem da lista, item a item.
  */
 function iniciarAtalhosDaCasca() {
   const prefs = $("#abrir-prefs");
   for (const el of document.querySelectorAll("[data-abrir-prefs]")) {
     el.addEventListener("click", () => prefs?.click());
-  }
-
-  for (const el of document.querySelectorAll("[data-focar-mercado]")) {
-    el.addEventListener("click", () => $("#mercado-topo select")?.focus());
   }
 
   const ajuda = document.getElementById("ajuda");
@@ -53,31 +47,6 @@ function iniciarAtalhosDaCasca() {
       el.addEventListener("click", () => abrirDialogo(ajuda));
     }
   }
-}
-
-/**
- * O seletor de mercado no cabeçalho.
- *
- * Vive fora das áreas porque o cabeçalho vive fora delas: uma tela só, montada uma
- * vez, em vez de uma cópia por área que se redesenha junto. Trocar de mercado muda
- * preço, oferta e total em qualquer lugar do site, então redesenha a área atual —
- * seja ela a receita ou uma das três telas de compra.
- */
-function iniciarSeletorDeMercado() {
-  const caixa = $("#mercado-topo");
-
-  const desenhar = () => { caixa.innerHTML = seletorDeMercado(mercadoAtivo()); };
-
-  caixa.addEventListener("change", e => {
-    if (!e.target.closest("[data-mercado]")) return;
-
-    definirMercado(e.target.value);
-    desenhar();
-    redesenharArea();
-    caixa.querySelector("[data-mercado]")?.focus();
-  });
-
-  desenhar();
 }
 
 function atualizarBadge() {

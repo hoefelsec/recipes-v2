@@ -146,8 +146,12 @@ export function salvar(prefs) {
  * toda função de preço trata `mercado = null` como "sem filtro", e assim ninguém
  * precisa conhecer a palavra que a preferência usa para dizer isso.
  */
-export function mercadoAtivo(prefs = carregar()) {
-  return prefs.mercado === TODOS_OS_MERCADOS ? null : prefs.mercado;
+export function mercadoAtivo() {
+  /* A escolha de mercado passou a acontecer SÓ na página de montagem da lista, item
+     a item (cada ingrediente vai para o mercado onde será comprado). Nas demais telas
+     — receita, vitrine, carrinho — o site assume que nenhum mercado foi escolhido e
+     compara o mais barato entre todos. Daí `null` sempre. */
+  return null;
 }
 
 /** Troca o mercado ativo e devolve as preferências novas. `null` = todos. */
