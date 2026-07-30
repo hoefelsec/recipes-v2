@@ -32,7 +32,7 @@ import { mercado as mercadoPorId } from "../data/mercados.js";
 import { aplicarEscolhas } from "../data/resolve.js";
 import {
   ESCOPO_CARRINHO, carregarEscolhas, escolher as gravarEscolha,
-  carregarTenho, marcarTenho
+  carregarTenho, marcarTenho, atribuir, desatribuir
 } from "./choices.js";
 import { comparativoDeMercado } from "./market-compare.js";
 
@@ -459,11 +459,10 @@ function compraHTML(t) {
 
 /* ----------------------------------------------- passo 2: escolher mercado */
 
-/** O cabeçalho de uma coluna de mercado: logo, nome e selo. O botão de escolher
-    fica no rodapé da tabela, não aqui. */
-function colunaMercado(m, ativo, melhor) {
+/** O cabeçalho de uma coluna de mercado: logo e nome. */
+function colunaMercado(m, melhor) {
   return `
-    <th scope="col" class="mc-col${m.id === ativo ? " ativo" : ""}${m.id === melhor ? " melhor" : ""}">
+    <th scope="col" class="mc-col${melhor ? " melhor" : ""}">
       <span class="mc-col-topo">
         <img class="mc-logo" src="${esc(m.logo)}" alt="" onerror="this.remove()">
         <b>${esc(m.nome)}</b>
@@ -472,28 +471,30 @@ function colunaMercado(m, ativo, melhor) {
 }
 
 /**
- * Uma célula da tabela: o custo, o produto e a embalagem — ou o aviso.
- *
- * Clicar numa célula com preço abre os produtos daquele ingrediente vendidos
- * NAQUELE mercado (requisito 4).
+ * Uma célula da tabela principal: o preço + o botão "+" que joga o item para a
+ * lista daquele mercado. Clicar no preço abre os produtos do mercado.
  */
-function celulaMercado(c, ingId, mercadoId, melhor) {
+function celulaMercado(c, chave, ingId, mercadoId, melhor) {
   const classe = `mc-cel${c.estado ? ` ${c.estado}` : ""}${melhor ? " melhor" : ""}`;
 
   if (c.valor != null) {
     const aviso = c.estado === "alerta"
       ? `<i class="fa-solid fa-triangle-exclamation mc-icone" aria-hidden="true"></i> ` : "";
-    // Uma linha só: o preço. O produto e a embalagem vão para o `title` (e para a
-    // janela que abre ao clicar). A tabela fica mais fácil de correr com os olhos.
     const nomeProduto = c.produto ? `${c.produto.nome}${c.produto.marca ? ` (${c.produto.marca})` : ""}` : "";
     const medida = c.produto ? `${c.embalagens > 1 ? `${c.embalagens} × ` : ""}${textoEmbalagem(c.produto)}` : "";
-    const titulo = [nomeProduto, medida, c.motivo, "ver produtos deste ingrediente neste mercado"].filter(Boolean).join(" — ");
+    const titulo = [nomeProduto, medida, c.motivo].filter(Boolean).join(" — ");
 
     return `<td class="${classe}">
-      <button type="button" class="mc-cel-btn" data-cel-produtos="${esc(ingId)}" data-cel-mercado="${esc(mercadoId)}"
-              title="${esc(titulo)}">
-        ${aviso}<b>${esc(textoCusto(c.valor))}</b>
-      </button>
+      <div class="mc-cel-wrap">
+        <button type="button" class="mc-cel-btn" data-cel-produtos="${esc(ingId)}" data-cel-mercado="${esc(mercadoId)}"
+                title="${esc([titulo, "ver produtos"].filter(Boolean).join(" — "))}">
+          ${aviso}<b>${esc(textoCusto(c.valor))}</b>
+        </button>
+        <button type="button" class="mc-add" data-atribuir="${esc(chave)}" data-mercado="${esc(mercadoId)}"
+                title="Comprar neste mercado" aria-label="Comprar neste mercado">
+          <i class="fa-solid fa-plus" aria-hidden="true"></i>
+        </button>
+      </div>
     </td>`;
   }
 
@@ -502,38 +503,66 @@ function celulaMercado(c, ingId, mercadoId, melhor) {
           </td>`;
 }
 
-/**
- * O botão de escolher um mercado — no rodapé, abaixo do total.
- *
- * A melhor opção não ganha mais um selo "melhor opção"; é o próprio botão que se
- * destaca (preenchido, com estrela).
- */
-function escolherMercadoBtn(m, ativo, melhor) {
-  const eAtivo = m.id === ativo;
-  const cls = `mc-escolher${eAtivo ? " atual" : ""}${melhor ? " melhor" : ""}`;
-  const rotulo = eAtivo
-    ? '<i class="fa-solid fa-check" aria-hidden="true"></i> Escolhido'
-    : `${melhor ? '<i class="fa-solid fa-star" aria-hidden="true"></i> ' : ""}Escolher este mercado`;
-  return `<button type="button" class="${cls}" data-escolher-mercado="${esc(m.id)}">${rotulo}</button>`;
+/** Botão no rodapé: move todos os itens disponíveis para a lista deste mercado. */
+function comprarTudoBtn(m, melhor) {
+  return `<button type="button" class="mc-escolher${melhor ? " melhor" : ""}" data-escolher-mercado="${esc(m.id)}"
+                  title="Mover todos os itens disponíveis para a lista do ${esc(m.nome)}">
+    ${melhor ? '<i class="fa-solid fa-star" aria-hidden="true"></i> ' : ""}Comprar tudo aqui
+  </button>`;
 }
 
-function mercadoHTML(comp, ativo) {
-  const { mercados, linhas, matriz, totais, melhor } = comp;
+/** A lista de compras de um mercado (itens atribuídos a ele), com total. */
+function listaDoMercado(m, itens, total) {
+  const linhas = itens.map(({ linha, cell }) => {
+    const nome = linha.escolhidoNome ? esc(linha.escolhidoNome) : esc(linha.ing.nome);
+    const prod = cell.produto
+      ? `<small>${esc(cell.produto.nome)}${cell.produto.marca ? ` · ${esc(cell.produto.marca)}` : ""} · ${cell.embalagens > 1 ? `${cell.embalagens} × ` : ""}${esc(textoEmbalagem(cell.produto))}</small>`
+      : "";
+    const aviso = cell.estado === "alerta"
+      ? `<i class="fa-solid fa-triangle-exclamation mc-icone" aria-hidden="true" title="produto escolhido não vendido aqui"></i> ` : "";
+    return `
+      <tr>
+        <td class="ml-ing">${aviso}${nome}${prod}</td>
+        <td class="ml-preco">${cell.valor != null ? esc(textoCusto(cell.valor)) : "—"}</td>
+        <td class="ml-acao">
+          <button type="button" class="mc-remover" data-desatribuir="${esc(linha.chave)}"
+                  title="Tirar da lista do ${esc(m.nome)}" aria-label="Tirar da lista">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </td>
+      </tr>`;
+  }).join("");
 
-  const corpo = linhas.map(l => {
+  return `
+    <section class="mc-lista">
+      <header class="mc-lista-head">
+        <img class="mc-logo" src="${esc(m.logo)}" alt="" onerror="this.remove()">
+        <h3>${esc(m.nome)}</h3>
+        <span class="mc-lista-conta">${itens.length} ${itens.length === 1 ? "item" : "itens"}</span>
+      </header>
+      <table class="mc-lista-tabela">
+        <thead><tr><th>Ingrediente</th><th>Preço</th><th aria-hidden="true"></th></tr></thead>
+        <tbody>${linhas}</tbody>
+        <tfoot><tr><th scope="row">Total</th><td class="ml-preco">${esc(textoCusto(total))}</td><td></td></tr></tfoot>
+      </table>
+    </section>`;
+}
+
+function mercadoHTML(comp) {
+  const { mercados, matriz, pendentes, totais, melhor, porMercado, totaisMercado } = comp;
+
+  const corpo = pendentes.map(l => {
     const fixado = Boolean(l.escolhidoNome);
-    // Com produto fixado, o nome do produto SUBSTITUI o do ingrediente e a quantidade
-    // some (a embalagem já diz o que se leva). Genérico mostra a quantidade ao lado.
     const titulo = fixado
       ? esc(l.escolhidoNome)
       : `${esc(l.ing.nome)} <small class="mc-ing-qtd">${esc(textoPrecisa(l.precisa))}</small>`;
     const celulas = mercados
-      .map(m => celulaMercado(matriz.get(l.chave).get(m.id), l.ing.id, m.id, m.id === melhor))
+      .map(m => celulaMercado(matriz.get(l.chave).get(m.id), l.chave, l.ing.id, m.id, m.id === melhor))
       .join("");
     return `
       <tr class="${l.tenho ? "mc-linha-tenho" : ""}">
         <td class="mc-check">
-          <label class="mc-tenho" title="Já tenho em casa — fora da conta">
+          <label class="mc-tenho" title="Já tenho em casa — fora da compra">
             <input type="checkbox" data-tenho="${esc(l.chave)}" ${l.tenho ? "checked" : ""}>
             <span class="sr-only">Já tenho ${esc(l.ing.nome)} em casa</span>
           </label>
@@ -557,51 +586,61 @@ function mercadoHTML(comp, ativo) {
   }).join("");
 
   const acoesRow = mercados
-    .map(m => `<td class="mc-acao${m.id === melhor ? " melhor" : ""}">${escolherMercadoBtn(m, ativo, m.id === melhor)}</td>`)
+    .map(m => `<td class="mc-acao${m.id === melhor ? " melhor" : ""}">${comprarTudoBtn(m, m.id === melhor)}</td>`)
+    .join("");
+
+  const tabelaPrincipal = pendentes.length
+    ? `<div class="mc-wrap">
+         <table class="mercado-tabela">
+           <thead>
+             <tr>
+               <th scope="col" class="mc-check-col" title="Marque o que já tem em casa">
+                 <i class="fa-solid fa-house" aria-hidden="true"></i><span class="sr-only">Já tenho em casa</span>
+               </th>
+               <th scope="col" class="mc-canto">Ingrediente</th>
+               ${mercados.map(m => colunaMercado(m, m.id === melhor)).join("")}
+             </tr>
+           </thead>
+           <tbody>${corpo}</tbody>
+           <tfoot>
+             <tr class="mc-total">
+               <td class="mc-check"></td>
+               <th scope="row">Falta colocar</th>
+               ${totalRow}
+             </tr>
+             <tr class="mc-acoes">
+               <td></td><td></td>
+               ${acoesRow}
+             </tr>
+           </tfoot>
+         </table>
+       </div>`
+    : `<p class="mc-tudo"><i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+         Todos os ingredientes foram colocados numa lista de mercado. Você já pode gerar a lista de compras.</p>`;
+
+  const subs = mercados
+    .filter(m => porMercado.get(m.id).length)
+    .map(m => listaDoMercado(m, porMercado.get(m.id), totaisMercado.get(m.id)))
     .join("");
 
   return `
     <p class="compra-dica">
-      Cada preço é o mais barato para a quantidade que a compra precisa, em
-      embalagens inteiras. Onde você fixou um produto, é o preço dele. Clique no
-      ingrediente para trocar o produto, num preço para ver os produtos daquele
-      mercado, e escolha um mercado no rodapé para seguir para a compra.
-      Marque a caixa do que já tem em casa para tirá-lo da conta.
+      Para cada ingrediente, clique no <b>+</b> do mercado onde vai comprá-lo — ou use
+      “Comprar tudo aqui” para levar tudo o que um mercado tem. O item vai para a lista
+      daquele mercado, abaixo. Marque o que já tem em casa. Você avança quando todos os
+      ingredientes estiverem numa lista.
     </p>
 
-    <div class="mc-wrap">
-      <table class="mercado-tabela">
-        <thead>
-          <tr>
-            <th scope="col" class="mc-check-col" title="Marque o que já tem em casa">
-              <i class="fa-solid fa-house" aria-hidden="true"></i><span class="sr-only">Já tenho em casa</span>
-            </th>
-            <th scope="col" class="mc-canto">Ingrediente</th>
-            ${mercados.map(m => colunaMercado(m, ativo, melhor)).join("")}
-          </tr>
-        </thead>
-        <tbody>${corpo}</tbody>
-        <tfoot>
-          <tr class="mc-total">
-            <td class="mc-check"></td>
-            <th scope="row">Total estimado</th>
-            ${totalRow}
-          </tr>
-          <tr class="mc-acoes">
-            <td></td>
-            <td></td>
-            ${acoesRow}
-          </tr>
-        </tfoot>
-      </table>
-    </div>
+    ${tabelaPrincipal}
 
-    <p class="compra-nota">
+    ${subs ? `<div class="mc-listas">${subs}</div>` : ""}
+
+    ${pendentes.length ? `<p class="compra-nota">
       <i class="fa-solid fa-triangle-exclamation nota-amarela" aria-hidden="true"></i>
       amarelo: o produto que você fixou não é vendido ali — o preço é do mais barato que serve.
       <span class="mc-tag nota-tag">indisponível</span>: o mercado não vende nenhum produto
-      para o ingrediente, e o total vira um piso. Preços fictícios, para teste.
-    </p>`;
+      para o ingrediente. Preços fictícios, para teste.
+    </p>` : ""}`;
 }
 
 /**
@@ -744,7 +783,7 @@ export function renderizarCarrinho(alvo, { passo = 1 } = {}) {
     const pratos = itens.reduce((s, i) => s + i.qtd, 0);
     const info = PASSOS.find(p => p.numero === atual);
 
-    let corpo;
+    let corpo, comp = null;
     if (atual === 1) {
       corpo = `<p class="area-sub">${itens.length} ${itens.length === 1 ? "receita" : "receitas"},
            ${pratos} ${pratos === 1 ? "preparo" : "preparos"}. A mesma receita com porções
@@ -753,17 +792,22 @@ export function renderizarCarrinho(alvo, { passo = 1 } = {}) {
            .map((it, i) => linhaReceita(it, compra.porItem[i], abertas.has(it.chave), escolhas, mercado))
            .join("")}</ul>`;
     } else {
-      const comp = comparativoDeMercado(itens, escolhas);
+      comp = comparativoDeMercado(itens, escolhas);
       corpo = comp.linhas.length
-        ? mercadoHTML(comp, mercado)
+        ? mercadoHTML(comp)
         : `<p class="area-sub">Nada para comparar entre os mercados.</p>`;
     }
 
+    // Só avança quando todo ingrediente está numa lista de mercado (ou marcado "já tenho")
+    const podeAvancar = comp ? comp.todasColocadas : false;
     const rodape = atual === 1
       ? `<button type="button" class="btn-texto" id="limpar-carrinho">Limpar carrinho</button>
          <a class="btn-primario" href="#/carrinho?passo=2">Escolher mercado</a>`
       : `<a class="btn-texto" href="#/carrinho">Voltar às receitas</a>
-         <a class="btn-primario" href="#/lista">Gerar lista de compras</a>`;
+         ${podeAvancar
+            ? `<a class="btn-primario" href="#/lista">Gerar lista de compras</a>`
+            : `<button type="button" class="btn-primario" disabled
+                       title="Coloque cada ingrediente numa lista de mercado (ou marque como já tenho)">Gerar lista de compras</button>`}`;
 
     alvo.innerHTML = `
       <div class="area">
@@ -882,15 +926,15 @@ export function renderizarCarrinho(alvo, { passo = 1 } = {}) {
    * sincronia — o preço da receita, os totais, o próprio seletor. Depois troca o
    * passo para a compra.
    */
-  /* Selecionar um mercado apenas fixa a escolha (e destaca a coluna) — não avança
-     de página. Passa pelo seletor do cabeçalho para o `app.js` trocar o mercado
-     ativo e redesenhar tudo em sincronia. */
-  function escolherMercado(id) {
-    const sel = document.querySelector("#mercado-topo select");
-    if (sel && sel.value !== id) {
-      sel.value = id;
-      sel.dispatchEvent(new Event("change", { bubbles: true }));
+  /* "Comprar tudo aqui": move todos os itens pendentes que este mercado vende
+     para a lista dele. O que ele não vende continua na tabela principal. */
+  function comprarTudoNoMercado(mid) {
+    const comp = comparativoDeMercado(carrinho.lerComReceitas(), carregarEscolhas());
+    for (const l of comp.pendentes) {
+      const cell = comp.matriz.get(l.chave).get(mid);
+      if (cell && cell.valor != null) atribuir(l.chave, mid);
     }
+    desenhar();
   }
 
   /* Janela de produtos do comparativo: abre pelo nome do ingrediente (todos os
@@ -921,7 +965,13 @@ export function renderizarCarrinho(alvo, { passo = 1 } = {}) {
 
   const aoClicar = e => {
     const escMerc = e.target.closest("[data-escolher-mercado]");
-    if (escMerc) { escolherMercado(escMerc.dataset.escolherMercado); return; }
+    if (escMerc) { comprarTudoNoMercado(escMerc.dataset.escolherMercado); return; }
+
+    const add = e.target.closest("[data-atribuir]");
+    if (add) { atribuir(add.dataset.atribuir, add.dataset.mercado); desenhar(); return; }
+
+    const rem = e.target.closest("[data-desatribuir]");
+    if (rem) { desatribuir(rem.dataset.desatribuir); desenhar(); return; }
 
     const ingBtn = e.target.closest("[data-ing-produtos]");
     if (ingBtn) { abrirProdutos(ingBtn.dataset.ingProdutos, null); return; }

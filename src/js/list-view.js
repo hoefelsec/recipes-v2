@@ -1,22 +1,19 @@
-/* Passo 3: a folha de compras, pronta para imprimir (ou salvar em PDF pelo
-   diálogo de impressão do navegador).
+/* Passo 3: as folhas de compra, uma por mercado, prontas para imprimir (ou
+   salvar em PDF pelo diálogo de impressão do navegador).
 
-   Aqui a tela É a folha, e a folha é para a mão de quem está no mercado: uma
-   linha por item, com caixa para marcar, o nome do produto e a quantidade. Nada
-   mais. Os números que ajudam a decidir — quanto se usa, quanto sobra, quanto
-   custa cada linha — pertencem ao passo 2, onde ainda se está decidindo.
+   Cada ingrediente foi atribuído a um mercado no passo 2. Aqui isso vira uma
+   folha por mercado — na impressão, cada uma começa numa página, no mesmo PDF —,
+   com uma linha por item: caixa para marcar, produto e quantidade da embalagem.
 
-   O que a pessoa marcou como "já tenho em casa" não entra na lista de comprar:
-   sai numa seção à parte, para ela poder conferir que marcou o que quis. */
+   O que a pessoa marcou como "já tenho em casa" sai numa seção à parte, para
+   conferir; o que ainda não foi colocado em mercado nenhum é avisado no topo. */
 
 import { esc } from "./dom.js";
 import * as carrinho from "./cart.js";
-import { resumo } from "./shopping-list.js";
-import { totaisDaCompra, textoPrecisa } from "./purchase.js";
-import { carregarEscolhas, carregarTenho } from "./choices.js";
+import { textoPrecisa } from "./purchase.js";
+import { carregarEscolhas } from "./choices.js";
 import { textoCusto, textoEmbalagem } from "./pricing.js";
-import { mercadoAtivo } from "./settings.js";
-import { mercado as porId } from "../data/mercados.js";
+import { comparativoDeMercado } from "./market-compare.js";
 
 const hoje = () => new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
 
@@ -33,84 +30,90 @@ function vazioHTML() {
 }
 
 /**
- * Uma linha da folha: caixa, produto, quantidade.
+ * Uma linha da folha: caixa, produto e a quantidade da compra.
  *
- * A quantidade é a da compra — quantas embalagens, e de que tamanho —, não a que
- * a receita consome. Na gôndola o que resolve é "2 × 500 g".
+ * A quantidade é a da embalagem — quantas e de que tamanho —, não a que a receita
+ * consome: na gôndola o que resolve é "2 × 500 g".
  */
-function linha(l) {
-  const p = l.produto;
+function folhaLinha(linha, cell) {
+  const p = cell.produto;
   const marca = p?.marca ? ` <em class="folha-marca">${esc(p.marca)}</em>` : "";
-
-  /* A embalagem como está no rótulo, não a medida que a conta usa: um litro de
-     leite não é "1,03 kg" na prateleira. Uma embalagem só dispensa o "1 ×". */
-  const quanto = l.embalagens == null || !p
-    ? textoPrecisa(l.precisa)
-    : (l.embalagens === 1 ? textoEmbalagem(p) : `${l.embalagens} × ${textoEmbalagem(p)}`);
+  const quanto = p
+    ? (cell.embalagens === 1 ? textoEmbalagem(p) : `${cell.embalagens} × ${textoEmbalagem(p)}`)
+    : textoPrecisa(linha.precisa);
 
   return `
     <li>
       <span class="marca" aria-hidden="true"></span>
-      <span class="folha-nome">${p ? esc(p.nome) : esc(l.ing.nome)}${marca}</span>
+      <span class="folha-nome">${p ? esc(p.nome) : esc(linha.ing.nome)}${marca}</span>
       <span class="folha-qtd">${esc(quanto)}</span>
     </li>`;
 }
 
+/** A folha de um mercado: cabeçalho, itens e total. Começa em nova página ao imprimir. */
+function folhaMercado(m, itens, total) {
+  return `
+    <section class="folha-mercado">
+      <header class="folha-mercado-head">
+        <img class="mc-logo" src="${esc(m.logo)}" alt="" onerror="this.remove()">
+        <div>
+          <p class="eyebrow-escuro">${esc(hoje())}</p>
+          <h2>${esc(m.nome)}</h2>
+        </div>
+        <span class="folha-mercado-total">${esc(textoCusto(total))}</span>
+      </header>
+      <ul class="folha">${itens.map(({ linha, cell }) => folhaLinha(linha, cell)).join("")}</ul>
+      <p class="folha-mercado-rodape">
+        ${itens.length} ${itens.length === 1 ? "item" : "itens"} · total estimado ${esc(textoCusto(total))}
+      </p>
+    </section>`;
+}
+
 function folhaHTML(itens) {
-  const t = totaisDaCompra(itens, carregarEscolhas(), { tenho: carregarTenho(), mercado: mercadoAtivo() });
-  const { receitas, pratos } = resumo(itens);
+  const comp = comparativoDeMercado(itens, carregarEscolhas());
+  const comItens = comp.mercados.filter(m => comp.porMercado.get(m.id).length);
+  const tenho = comp.linhas.filter(l => l.tenho);
+  const pendentes = comp.pendentes;
+  const totalGeral = comItens.reduce((s, m) => s + comp.totaisMercado.get(m.id), 0);
 
-  const comprar = t.linhas.filter(l => !l.tenho);
-  const emCasa = t.linhas.filter(l => l.tenho);
-
-  /* Item que o mercado escolhido não vende continua na folha: você ainda precisa
-     dele. O que muda é que não há produto nem embalagem para escrever, então sai o
-     nome do ingrediente e a quantidade da receita — e a nota avisa que esses vão
-     ter de sair de outro lugar. */
-  const semProduto = comprar.filter(l => !l.produto || l.produto.foraDoMercado).length;
+  const secoes = comItens
+    .map(m => folhaMercado(m, comp.porMercado.get(m.id), comp.totaisMercado.get(m.id)))
+    .join("");
 
   return `
     <div class="area lista-area">
       <header class="area-head lista-head">
         <p class="eyebrow-escuro">Lista de compras · passo 3 de 3</p>
-        <h1>Compras</h1>
-        <p class="area-sub lista-data">${esc(hoje())}${
-          t.mercado ? ` · ${esc(porId(t.mercado)?.nome ?? "")}` : ""} ·
-          ${comprar.length} ${comprar.length === 1 ? "item" : "itens"}
-          para ${pratos} ${pratos === 1 ? "preparo" : "preparos"} ·
-          ${esc(textoCusto(t.compra))}</p>
+        <h1>Suas listas por mercado</h1>
+        <p class="area-sub lista-data">${esc(hoje())} ·
+          ${comItens.length} ${comItens.length === 1 ? "mercado" : "mercados"} ·
+          ${esc(textoCusto(totalGeral))}</p>
       </header>
 
-      <section class="lista-resumo" aria-labelledby="tit-resumo">
-        <h2 id="tit-resumo">Receitas</h2>
-        <ul>
-          ${receitas.map(r => `
+      ${pendentes.length ? `
+        <p class="lista-nota lista-pendentes">
+          <strong>${pendentes.length}
+          ${pendentes.length === 1 ? "ingrediente ainda não foi colocado" : "ingredientes ainda não foram colocados"}
+          numa lista de mercado</strong> — volte ao mercado para resolvê-los antes de comprar.
+        </p>` : ""}
+
+      ${secoes || `<p class="area-sub">Nenhum item foi colocado numa lista de mercado ainda.</p>`}
+
+      ${tenho.length ? `
+        <section class="folha-mercado folha-tenho">
+          <header class="folha-mercado-head"><div><h2>Você já tem em casa</h2></div></header>
+          <ul class="folha">${tenho.map(l => `
             <li>
-              <span>${esc(r.nome)}</span>
-              <span class="lista-resumo-qtd">${esc(String(r.porcoes))} ${esc(r.unidade)}${r.qtd > 1 ? ` · ${r.qtd}×` : ""}</span>
-            </li>`).join("")}
-        </ul>
-      </section>
-
-      <section class="lista-itens" aria-labelledby="tit-itens">
-        <h2 id="tit-itens">Para comprar</h2>
-        <ul class="folha">${comprar.map(linha).join("")}</ul>
-      </section>
-
-      ${emCasa.length ? `
-        <section class="lista-itens lista-tenho" aria-labelledby="tit-tenho">
-          <h2 id="tit-tenho">Você marcou que já tem</h2>
-          <ul class="folha">${emCasa.map(linha).join("")}</ul>
+              <span class="marca" aria-hidden="true"></span>
+              <span class="folha-nome">${esc(l.escolhidoNome || l.ing.nome)}</span>
+              <span class="folha-qtd">${esc(textoPrecisa(l.precisa))}</span>
+            </li>`).join("")}</ul>
         </section>` : ""}
 
       <p class="lista-nota">
-        A quantidade é a da embalagem, não a que a receita usa — no mercado o que
-        resolve é o pacote. Preços fictícios, para teste. Sal e água ficam de fora:
-        assume-se que já estão em casa.
-        ${t.mercado && semProduto ? `<strong>${semProduto}
-          ${semProduto === 1 ? "item não é vendido" : "itens não são vendidos"}
-          no ${esc(porId(t.mercado)?.nome ?? "")}</strong> — está na folha com a
-          quantidade que a receita pede, para você resolver onde der.` : ""}
+        A quantidade é a da embalagem, não a que a receita usa — no mercado o que resolve
+        é o pacote. Uma folha por mercado: na impressão, cada uma começa numa página, no
+        mesmo PDF. Preços fictícios, para teste.
       </p>
 
       <div class="lista-acoes">
@@ -131,8 +134,7 @@ export function renderizarLista(alvo, { imprimir = false } = {}) {
 
   desenhar();
 
-  // Se o carrinho mudar (outra aba, por exemplo), a folha acompanha —
-  // sem reabrir o diálogo de impressão
+  // Se o carrinho mudar (outra aba, por exemplo), a folha acompanha
   const cancelar = carrinho.inscrever(desenhar);
 
   // Chegando pelo botão do passo 2, abre o diálogo de impressão direto

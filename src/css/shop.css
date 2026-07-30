@@ -425,13 +425,13 @@ button.compra-item { cursor: pointer; }
 /* Reserva largura para o rótulo do ingrediente não espremer */
 .mc-canto, .mc-ing { min-width: 160px; }
 
-/* Célula de preço: uma linha só (o preço), clicável, abre os produtos do mercado */
+/* Célula de preço: o preço (clicável, abre os produtos) + o botão "+" que joga o
+   item para a lista daquele mercado. */
+.mc-cel-wrap { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
 .mc-cel-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: flex-end;
   gap: 6px;
-  width: 100%;
   background: none;
   border: none;
   padding: 0;
@@ -440,6 +440,19 @@ button.compra-item { cursor: pointer; }
   white-space: nowrap;
 }
 .mc-cel-btn:hover b { text-decoration: underline; text-underline-offset: 3px; }
+.mc-add {
+  flex: none;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--verde-fresco);
+  background: var(--wash-verde);
+  color: var(--verde-escuro);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: .78rem;
+  transition: background .15s var(--ease), color .15s var(--ease);
+}
+.mc-add:hover { background: var(--verde-escuro); color: #fff; border-color: var(--verde-escuro); }
+.mc-cel.alerta .mc-add { border-color: var(--amarelo); }
 
 /* Janela de produtos do comparativo */
 .mcp-lista { display: flex; flex-direction: column; gap: 8px; margin: 6px 0 4px; }
@@ -479,7 +492,60 @@ button.compra-item { cursor: pointer; }
 }
 .mcp-generico .mcp-nome { color: var(--verde-escuro); }
 
+/* Aviso de tudo colocado */
+.mc-tudo {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--wash-verde); color: var(--verde-escuro);
+  border-radius: var(--radius); padding: 16px 20px;
+  font-weight: 600; margin-bottom: 16px;
+}
+.mc-tudo i { font-size: 1.2rem; }
+
+/* Listas por mercado (itens já atribuídos) */
+.mc-listas { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; margin-top: 22px; }
+.mc-lista { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.mc-lista-head { display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-bottom: 1px solid var(--line); background: var(--paper-2); }
+.mc-lista-head h3 { font-size: 1.05rem; flex: 1; }
+.mc-lista-head .mc-logo { width: 26px; height: 26px; }
+.mc-lista-conta { font-size: .76rem; color: var(--ink-faint); }
+.mc-lista-tabela { width: 100%; border-collapse: collapse; }
+.mc-lista-tabela th, .mc-lista-tabela td { padding: 9px 16px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+.mc-lista-tabela thead th { font-size: .7rem; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-faint); }
+.ml-ing { color: var(--ink); font-weight: 500; }
+.ml-ing small { display: block; font-weight: 400; color: var(--ink-faint); font-size: .74rem; }
+.ml-preco { text-align: right; font-variant-numeric: tabular-nums; color: var(--verde-escuro); font-weight: 600; white-space: nowrap; }
+.mc-lista-tabela thead th:nth-child(2) { text-align: right; }
+.ml-acao { width: 1%; text-align: center; }
+.mc-remover {
+  border: none; background: none; color: var(--ink-faint);
+  border-radius: 50%; width: 26px; height: 26px;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background .15s var(--ease), color .15s var(--ease);
+}
+.mc-remover:hover { background: var(--vermelho-wash); color: var(--vermelho); }
+.mc-lista-tabela tfoot th, .mc-lista-tabela tfoot td { border-bottom: none; border-top: 2px solid var(--line-strong); font-family: var(--font-display); }
+.mc-lista-tabela tfoot .ml-preco { font-size: 1.05rem; }
+
+/* Botão de avançar desabilitado até tudo estar colocado */
+.btn-primario:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+.btn-primario:disabled:hover { transform: none; background: var(--verde-escuro); }
+
 /* ===================================================== folha de compras ==== */
+
+/* Folha por mercado (uma por página na impressão) */
+.folha-mercado {
+  background: var(--paper); border: 1px solid var(--line);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 20px 22px; margin-bottom: 20px;
+}
+.folha-mercado-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.folha-mercado-head h2 { font-size: 1.3rem; }
+.folha-mercado-head .mc-logo { width: 34px; height: 34px; }
+.folha-mercado-total { margin-left: auto; font-family: var(--font-display); font-size: 1.2rem; color: var(--verde-escuro); font-weight: 600; }
+.folha-mercado-rodape { margin-top: 10px; font-size: .82rem; color: var(--ink-soft); text-align: right; }
+.folha-tenho { opacity: .9; }
+.lista-pendentes strong { color: var(--amarelo); }
+
 
 .lista-area { max-width: 780px; }
 .lista-data { color: var(--ink-soft); font-size: .9rem; }

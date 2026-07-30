@@ -91,9 +91,16 @@ body { background: #fff; color: #000; font-size: 11pt; }
 
 .lista-nota { background: none; border: 1px solid #ccc; color: #333; font-size: 9pt; }
 
-/* Duas colunas quando a lista é longa — economiza papel */
-@media print and (min-width: 0) {
-  .lista-itens ul { columns: 2; column-gap: 26px; }
-  .passos, .lista-acoes { display: none !important; }
-  .lista-itens li { break-inside: avoid; }
+/* Uma folha de mercado por página, no mesmo PDF */
+.folha-mercado {
+  break-before: page;
+  break-inside: avoid;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
 }
+.folha-mercado:first-of-type { break-before: auto; }
+.folha-mercado-head { border-bottom: 1px solid #999; padding-bottom: 8pt; }
+.folha-mercado-total { color: #000 !important; }
+.folha-mercado-rodape { color: #333; }
+.lista-acoes, .lista-pendentes { display: none !important; }

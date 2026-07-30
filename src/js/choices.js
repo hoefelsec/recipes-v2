@@ -17,11 +17,13 @@
 
 import { PRODUTOS, produto } from "../data/produtos.js";
 import { existe as ingredienteExiste, naSubarvore } from "../data/ingredientes.js";
+import { existe as mercadoExiste } from "../data/mercados.js";
 
 const CHAVE = "receitas:produtos";
 const CHAVE_RECENTES = "receitas:recentes";
 const CHAVE_ORDEM = "receitas:ordem-produtos";
 const CHAVE_TENHO = "receitas:tenho";
+const CHAVE_MERCADO = "receitas:compras-por-mercado";
 
 /** Quantos produtos a lista de recentes guarda. */
 export const MAX_RECENTES = 40;
@@ -198,9 +200,42 @@ export function marcarTenho(chave, tenho) {
 
 export const limparTenho = () => escrever(CHAVE_TENHO, []);
 
+/* --------------------------------------------- em que mercado comprar cada item */
+
+/**
+ * A que mercado cada linha da compra foi atribuída: `{ chaveDaLinha: mercadoId }`.
+ *
+ * É como o leitor monta uma lista por mercado — cada ingrediente vai para o mercado
+ * onde ele decidiu comprá-lo. Chave e mercado inválidos são descartados na leitura,
+ * como todo o resto do estado guardado.
+ */
+export function carregarAtribuicoes() {
+  const bruto = ler(CHAVE_MERCADO);
+  const saida = {};
+  if (bruto && typeof bruto === "object" && !Array.isArray(bruto)) {
+    for (const [chave, mercadoId] of Object.entries(bruto)) {
+      if (chaveDeLinhaExiste(chave) && mercadoExiste(mercadoId)) saida[chave] = mercadoId;
+    }
+  }
+  return saida;
+}
+
+/** Atribui (ou tira, com `mercadoId = null`) uma linha a um mercado. */
+export function atribuir(chave, mercadoId) {
+  const atual = carregarAtribuicoes();
+  if (mercadoId && mercadoExiste(mercadoId) && chaveDeLinhaExiste(chave)) atual[chave] = mercadoId;
+  else delete atual[chave];
+  escrever(CHAVE_MERCADO, atual);
+  return atual;
+}
+
+export const desatribuir = chave => atribuir(chave, null);
+export const limparAtribuicoes = () => escrever(CHAVE_MERCADO, {});
+
 /** Apaga tudo — usado pelo "voltar ao padrão" das preferências e pelos testes. */
 export function limparEscolhas() {
   escrever(CHAVE, {});
   escrever(CHAVE_RECENTES, []);
   escrever(CHAVE_TENHO, []);
+  escrever(CHAVE_MERCADO, {});
 }
