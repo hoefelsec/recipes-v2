@@ -91,7 +91,29 @@ article { display: block; }
 .meta dd span { font-weight: 500; color: var(--ink-body); }
 .meta-porcoes dd { margin-top: 2px; }
 .meta-add { margin-left: auto; }
+.meta-acoes { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .meta-add .btn-add { width: auto; }
+
+/* Atalho para a janela de nutrientes, ao lado do "Adicionar ao carrinho" */
+.btn-nutri {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--wash-verde);
+  color: var(--verde-escuro);
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 11px 18px;
+  font-weight: 600;
+  font-family: var(--font-display);
+  transition: background .15s var(--ease);
+}
+.btn-nutri:hover { background: color-mix(in srgb, var(--verde-fresco) 32%, var(--wash-verde)); }
+.btn-nutri b {
+  font-weight: 700;
+  padding-left: 9px;
+  border-left: 1px solid color-mix(in srgb, var(--verde-escuro) 30%, transparent);
+}
 
 /* --------------------------------------------------------------- colunas --- */
 

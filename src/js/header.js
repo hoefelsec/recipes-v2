@@ -16,11 +16,12 @@ import { $, normalizar } from "./dom.js";
 /** Destaca a seção atual. A folha impressa é o fim do carrinho, não outra seção. */
 export function marcarArea(area) {
   for (const link of document.querySelectorAll(".area-link")) {
-    /* A lista de compras tem seu próprio item de menu ("Listas de compras"), então
-       não empresta o destaque do carrinho. A página da receita ainda destaca
-       "Início", que é de onde se veio e para onde se volta. */
+    /* Só há dois itens de menu: Receitas e Carrinho. A folha de compras (#/lista) é
+       o fim do fluxo do carrinho, então acende "Carrinho"; a página da receita
+       acende "Receitas", de onde se veio e para onde se volta. */
     const desta = link.dataset.area === area
-      || (area === "receita" && link.dataset.area === "comprar");
+      || (area === "receita" && link.dataset.area === "comprar")
+      || (area === "lista" && link.dataset.area === "carrinho");
 
     if (desta) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");

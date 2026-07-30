@@ -75,6 +75,18 @@ function seletorPorcoes(r, porcoes) {
 }
 
 function dados(r, porcoes) {
+  /* O bloco de nutrientes deixou a página: aqui fica só o atalho para a janela,
+     ao lado do "Adicionar ao carrinho". O número por porção não muda com o seletor,
+     então o kcal cabe como dica no próprio botão. Só aparece se houver o que somar. */
+  const e = estimarNutrientes(r);
+  const botaoNutri = e.contados
+    ? `<button type="button" class="btn-nutri" id="ver-nutrientes" aria-haspopup="dialog">
+         <i class="fa-solid fa-heart-pulse" aria-hidden="true"></i>
+         <span>Nutrientes</span>
+         <b>${Math.round(e.porPorcao.kcal)} kcal</b>
+       </button>`
+    : "";
+
   return `
     <dl class="meta">
       <div class="meta-porcoes">
@@ -94,9 +106,12 @@ function dados(r, porcoes) {
         <dd><span>${esc(r.rendimento)}</span></dd>
       </div>
       <div class="meta-add">
-        <dt class="sr-only">Carrinho</dt>
-        <dd>
-          <button type="button" class="btn-add" id="add-carrinho">Adicionar ao carrinho</button>
+        <dt class="sr-only">Ações</dt>
+        <dd class="meta-acoes">
+          ${botaoNutri}
+          <button type="button" class="btn-add" id="add-carrinho">
+            <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Adicionar ao carrinho
+          </button>
         </dd>
       </div>
     </dl>`;
@@ -306,48 +321,6 @@ function ingredientes(r, porcoes, prefs) {
       <div id="custo-total">${custoTotal(r, porcoes, mercadoAtivo(prefs))}</div>
       <p class="ing-nota-preco" id="nota-preco">${notaDePreco(mercadoAtivo(prefs))}</p>
       <div id="escala-aviso">${avisoEscala(r, porcoes)}</div>
-    </section>`;
-}
-
-/**
- * Estimativa de nutrientes por porção.
- *
- * Não depende do seletor de porções: escalar multiplica ingredientes e porções
- * pelo mesmo fator, e a divisão cancela.
- */
-function nutrientes(r) {
-  const e = estimarNutrientes(r);
-  if (!e.contados) return "";   // nada calculável: melhor não mostrar caixa vazia
-
-  const linhas = ORDEM.map(campo => {
-    const { valor, un } = formatarNutriente(campo, e.porPorcao[campo]);
-    return `
-      <li${campo === "kcal" ? ' class="nutri-destaque"' : ""}>
-        <span>${esc(ROTULOS[campo])}</span>
-        <b>${esc(valor)} <em>${esc(un)}</em></b>
-      </li>`;
-  }).join("");
-
-  const fora = e.deFora.length
-    ? ` Não inclui ${e.deFora.map(d => esc(d.nome)).join(", ")} — ${esc(e.deFora[0].motivo)}.`
-    : "";
-
-  const comRotulo = r.ingredientes.filter(i => i.nutrientesDoRotulo?.length).length;
-  const rotulos = comRotulo
-    ? ` Já considera o rótulo de ${comRotulo} produto${comRotulo > 1 ? "s" : ""} escolhido${comRotulo > 1 ? "s" : ""}.`
-    : "";
-
-  return `
-    <section class="card card-nutri" aria-labelledby="tit-nutrientes">
-      <h2 id="tit-nutrientes">Nutrientes por porção</h2>
-      <ul class="nutri">${linhas}</ul>
-      <button type="button" class="nutri-mais" id="ver-nutrientes" aria-haspopup="dialog">
-        Ver de onde vêm as calorias
-      </button>
-      <p class="nutri-nota">
-        Estimativa sobre os ingredientes crus, a partir de tabelas de referência —
-        não é informação nutricional do prato pronto.${fora}${rotulos}
-      </p>
     </section>`;
 }
 
@@ -563,7 +536,6 @@ export function renderizarReceita(base, alvo, { porcoes, aoMudarPorcoes, lerPref
       <div class="wrap">
         <div class="col-left">
           ${ingredientes(r, atual, prefs())}
-          <div id="cartao-nutri">${nutrientes(r)}</div>
           ${utensilios(r)}
         </div>
         <div>${preparo(r)}</div>
@@ -589,8 +561,7 @@ export function renderizarReceita(base, alvo, { porcoes, aoMudarPorcoes, lerPref
      preço, o total e os nutrientes, que passam a vir do rótulo. */
   function redesenharTudo() {
     redesenharLista();
-    alvo.querySelector("#cartao-nutri").innerHTML = nutrientes(r);
-    redesenharDetalhes();
+    redesenharDetalhes();   // se a janela de nutrientes estiver aberta, acompanha
   }
 
   /* ---------------------------------------------------------- porções */
@@ -642,13 +613,13 @@ export function renderizarReceita(base, alvo, { porcoes, aoMudarPorcoes, lerPref
 
   /* --------------------------------------------- detalhes dos nutrientes */
 
-  /* O ouvinte fica no invólucro, não no cartão: o cartão é substituído a cada
-     troca de produto, e um ouvinte nele morreria junto. */
-  const involucroNutri = alvo.querySelector("#cartao-nutri");
+  /* O bloco de nutrientes saiu da página; sobrou o atalho no cabeçalho, ao lado do
+     "Adicionar ao carrinho". O botão está na `.meta`, que é desenhada uma vez, então
+     o ouvinte sobrevive aos redesenhos da lista — e `r` fecha sobre o valor atual,
+     refletindo o produto escolhido na hora de abrir. */
   const dialogoNutri = document.getElementById("nutri-detalhes");
 
-  involucroNutri.addEventListener("click", e => {
-    if (e.target.closest("a") || !e.target.closest(".card-nutri")) return;
+  alvo.querySelector("#ver-nutrientes")?.addEventListener("click", () => {
     dialogoNutri.innerHTML = detalhesHTML(r, prefs());
     abrirDialogo(dialogoNutri);
   }, ate);

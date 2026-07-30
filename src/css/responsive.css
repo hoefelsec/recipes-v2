@@ -32,7 +32,8 @@
   .nutri-painel { grid-template-columns: minmax(0, 1fr); justify-items: center; }
   .nutri-barras { width: 100%; }
   .meta-add { margin-left: 0; flex-basis: 100%; }
-  .meta-add .btn-add { width: 100%; }
+  .meta-acoes { width: 100%; }
+  .meta-acoes .btn-add, .meta-acoes .btn-nutri { flex: 1; justify-content: center; }
 
   /* -------- carrinho: cartão empilha -------- */
   .cart-linha {
