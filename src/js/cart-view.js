@@ -485,15 +485,16 @@ function celulaMercado(c, ingId, mercadoId, melhor) {
   if (c.valor != null) {
     const aviso = c.estado === "alerta"
       ? `<i class="fa-solid fa-triangle-exclamation mc-icone" aria-hidden="true"></i> ` : "";
-    const nome = c.produto
-      ? `<small class="mc-cel-nome">${esc(c.produto.nome)}${c.produto.marca ? ` · ${esc(c.produto.marca)}` : ""}</small>` : "";
-    const medida = c.produto
-      ? `<small class="mc-cel-emb">${c.embalagens > 1 ? `${c.embalagens} × ` : ""}${esc(textoEmbalagem(c.produto))}</small>` : "";
+    // Uma linha só: o preço. O produto e a embalagem vão para o `title` (e para a
+    // janela que abre ao clicar). A tabela fica mais fácil de correr com os olhos.
+    const nomeProduto = c.produto ? `${c.produto.nome}${c.produto.marca ? ` (${c.produto.marca})` : ""}` : "";
+    const medida = c.produto ? `${c.embalagens > 1 ? `${c.embalagens} × ` : ""}${textoEmbalagem(c.produto)}` : "";
+    const titulo = [nomeProduto, medida, c.motivo, "ver produtos deste ingrediente neste mercado"].filter(Boolean).join(" — ");
 
     return `<td class="${classe}">
       <button type="button" class="mc-cel-btn" data-cel-produtos="${esc(ingId)}" data-cel-mercado="${esc(mercadoId)}"
-              title="${esc([c.motivo, "ver produtos deste ingrediente neste mercado"].filter(Boolean).join(" — "))}">
-        ${aviso}<b>${esc(textoCusto(c.valor))}</b>${nome}${medida}
+              title="${esc(titulo)}">
+        ${aviso}<b>${esc(textoCusto(c.valor))}</b>
       </button>
     </td>`;
   }
@@ -504,12 +505,19 @@ function celulaMercado(c, ingId, mercadoId, melhor) {
           </td>`;
 }
 
-/** O botão de escolher um mercado — no rodapé, abaixo do total. */
-function escolherMercadoBtn(m, ativo) {
+/**
+ * O botão de escolher um mercado — no rodapé, abaixo do total.
+ *
+ * A melhor opção não ganha mais um selo "melhor opção"; é o próprio botão que se
+ * destaca (preenchido, com estrela).
+ */
+function escolherMercadoBtn(m, ativo, melhor) {
   const eAtivo = m.id === ativo;
-  return `<button type="button" class="mc-escolher${eAtivo ? " atual" : ""}" data-escolher-mercado="${esc(m.id)}">
-    ${eAtivo ? '<i class="fa-solid fa-check" aria-hidden="true"></i> Escolhido' : "Escolher este mercado"}
-  </button>`;
+  const cls = `mc-escolher${eAtivo ? " atual" : ""}${melhor ? " melhor" : ""}`;
+  const rotulo = eAtivo
+    ? '<i class="fa-solid fa-check" aria-hidden="true"></i> Escolhido'
+    : `${melhor ? '<i class="fa-solid fa-star" aria-hidden="true"></i> ' : ""}Escolher este mercado`;
+  return `<button type="button" class="${cls}" data-escolher-mercado="${esc(m.id)}">${rotulo}</button>`;
 }
 
 function mercadoHTML(comp, ativo) {
@@ -546,10 +554,7 @@ function mercadoHTML(comp, ativo) {
   }).join("");
 
   const acoesRow = mercados
-    .map(m => `<td class="mc-acao${m.id === melhor ? " melhor" : ""}">
-      ${m.id === melhor ? `<span class="mc-selo">melhor opção</span>` : ""}
-      ${escolherMercadoBtn(m, ativo)}
-    </td>`)
+    .map(m => `<td class="mc-acao${m.id === melhor ? " melhor" : ""}">${escolherMercadoBtn(m, ativo, m.id === melhor)}</td>`)
     .join("");
 
   return `

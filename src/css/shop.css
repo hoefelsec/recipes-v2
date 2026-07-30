@@ -341,6 +341,9 @@ button.compra-item { cursor: pointer; }
 }
 .mc-escolher:hover { background: var(--wash-verde); }
 .mc-escolher.atual { background: var(--verde-escuro); color: #fff; border-color: var(--verde-escuro); }
+/* Melhor opção: o próprio botão se destaca (preenchido, com estrela) */
+.mc-escolher.melhor { background: var(--verde-escuro); color: #fff; border-color: var(--verde-escuro); box-shadow: var(--shadow-brand); }
+.mc-escolher.melhor:hover { background: var(--verde-escuro-2); }
 
 /* Coluna ativa/melhor */
 .mc-col.ativo, .mc-col.melhor { background: var(--wash-verde); }
@@ -373,10 +376,9 @@ button.compra-item { cursor: pointer; }
   color: var(--vermelho);
 }
 
-/* Rodapé com o selo "melhor opção" e os botões de escolher (abaixo do total) */
+/* Rodapé com os botões de escolher (abaixo do total) */
 .mc-acoes td { border-top: none; text-align: center; padding: 6px 10px 14px; }
 .mc-acao.melhor { background: var(--wash-verde); }
-.mc-acao .mc-selo { display: block; margin: 0 auto 7px; width: fit-content; }
 
 /* Nome do ingrediente: clicável, abre os produtos */
 .mc-ing-btn {
@@ -400,22 +402,21 @@ button.compra-item { cursor: pointer; }
 /* Reserva largura para o rótulo do ingrediente não espremer */
 .mc-canto, .mc-ing { min-width: 160px; }
 
-/* Célula de preço: clicável, abre os produtos daquele mercado */
+/* Célula de preço: uma linha só (o preço), clicável, abre os produtos do mercado */
 .mc-cel-btn {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
   width: 100%;
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
   color: inherit;
+  white-space: nowrap;
 }
 .mc-cel-btn:hover b { text-decoration: underline; text-underline-offset: 3px; }
-.mc-cel-nome { font-weight: 500; color: var(--ink-soft); font-size: .74rem; line-height: 1.25; }
-.mc-cel-emb { color: var(--ink-faint); font-size: .7rem; }
 
 /* Janela de produtos do comparativo */
 .mcp-lista { display: flex; flex-direction: column; gap: 8px; margin: 6px 0 4px; }
