@@ -519,11 +519,29 @@ button.compra-item { cursor: pointer; }
 .mc-lista-tabela { width: 100%; border-collapse: collapse; }
 .mc-lista-tabela th, .mc-lista-tabela td { padding: 9px 16px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
 .mc-lista-tabela thead th { font-size: .7rem; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-faint); }
-.ml-ing { color: var(--ink); font-weight: 500; }
-.ml-ing small { display: block; font-weight: 400; color: var(--ink-faint); font-size: .74rem; }
-.ml-preco { text-align: right; font-variant-numeric: tabular-nums; color: var(--verde-escuro); font-weight: 600; white-space: nowrap; }
-.mc-lista-tabela thead th:nth-child(2) { text-align: right; }
-.ml-acao { width: 1%; text-align: center; }
+/* O ingrediente absorve o espaço; preço e ação ficam com a largura mínima, à direita.
+   Os seletores levam `.mc-lista-tabela` para vencer `.mc-lista-tabela td { text-align: left }`. */
+.mc-lista-tabela .ml-ing, .mc-lista-tabela thead th:first-child { width: 100%; }
+.mc-lista-tabela .ml-ing { color: var(--ink); font-weight: 500; }
+.mc-lista-tabela .ml-ing small { display: block; font-weight: 400; color: var(--ink-faint); font-size: .74rem; }
+.mc-lista-tabela .ml-preco, .mc-lista-tabela thead th:nth-child(2) {
+  width: 1%; white-space: nowrap; text-align: right; padding-left: 8px;
+}
+.mc-lista-tabela .ml-preco { font-variant-numeric: tabular-nums; color: var(--verde-escuro); font-weight: 600; }
+.mc-lista-tabela .ml-acao, .mc-lista-tabela thead th:nth-child(3) { width: 1%; text-align: center; padding-left: 6px; }
+
+/* Aviso amarelo (substituto) na própria linha da lista do mercado */
+.ml-linha-alerta { background: color-mix(in srgb, var(--amarelo-wash) 45%, transparent); }
+.ml-badge {
+  display: inline-block; vertical-align: middle;
+  font-size: .64rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em;
+  background: var(--amarelo-wash); color: var(--amarelo);
+  border-radius: var(--radius-pill); padding: 1px 8px; margin-left: 6px;
+}
+.ml-aviso { display: block; margin-top: 3px; color: var(--amarelo); font-size: .74rem; }
+
+/* Nota final, com respiro em relação às tabelas */
+.mc-nota-fim { margin-top: 24px; font-size: .8rem; color: var(--ink-faint); }
 .mc-remover {
   border: none; background: none; color: var(--ink-faint);
   border-radius: 50%; width: 26px; height: 26px;

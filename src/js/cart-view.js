@@ -515,14 +515,21 @@ function comprarTudoBtn(m, melhor) {
 function listaDoMercado(m, itens, total) {
   const linhas = itens.map(({ linha, cell }) => {
     const nome = linha.escolhidoNome ? esc(linha.escolhidoNome) : esc(linha.ing.nome);
+    const alerta = cell.estado === "alerta";
     const prod = cell.produto
       ? `<small>${esc(cell.produto.nome)}${cell.produto.marca ? ` · ${esc(cell.produto.marca)}` : ""} · ${cell.embalagens > 1 ? `${cell.embalagens} × ` : ""}${esc(textoEmbalagem(cell.produto))}</small>`
       : "";
-    const aviso = cell.estado === "alerta"
-      ? `<i class="fa-solid fa-triangle-exclamation mc-icone" aria-hidden="true" title="produto escolhido não vendido aqui"></i> ` : "";
+    // O aviso amarelo (substituto) fica NA linha, não numa legenda ao pé da tabela
+    const aviso = alerta
+      ? `<small class="ml-aviso"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+           o produto que você fixou não é vendido aqui — este é o substituto mais barato</small>`
+      : "";
     return `
-      <tr>
-        <td class="ml-ing">${aviso}${nome}${prod}</td>
+      <tr class="${alerta ? "ml-linha-alerta" : ""}">
+        <td class="ml-ing">
+          ${nome}${alerta ? `<span class="ml-badge">substituto</span>` : ""}
+          ${prod}${aviso}
+        </td>
         <td class="ml-preco">${cell.valor != null ? esc(textoCusto(cell.valor)) : "—"}</td>
         <td class="ml-acao">
           <button type="button" class="mc-remover" data-desatribuir="${esc(linha.chave)}"
@@ -635,12 +642,7 @@ function mercadoHTML(comp) {
 
     ${subs ? `<div class="mc-listas">${subs}</div>` : ""}
 
-    ${pendentes.length ? `<p class="compra-nota">
-      <i class="fa-solid fa-triangle-exclamation nota-amarela" aria-hidden="true"></i>
-      amarelo: o produto que você fixou não é vendido ali — o preço é do mais barato que serve.
-      <span class="mc-tag nota-tag">indisponível</span>: o mercado não vende nenhum produto
-      para o ingrediente. Preços fictícios, para teste.
-    </p>` : ""}`;
+    <p class="mc-nota-fim">Preços fictícios, para teste.</p>`;
 }
 
 /**
