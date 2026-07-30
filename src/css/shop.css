@@ -347,7 +347,6 @@ button.compra-item { cursor: pointer; }
 
 /* Linhas de ingrediente */
 .mc-ing { font-weight: 500; color: var(--ink); }
-.mc-ing small { display: block; font-weight: 400; color: var(--ink-faint); font-size: .76rem; }
 
 /* Células */
 .mc-cel { font-variant-numeric: tabular-nums; }
@@ -394,8 +393,12 @@ button.compra-item { cursor: pointer; }
 }
 .mc-ing-nome { font-weight: 600; color: var(--verde-escuro); }
 .mc-ing-btn:hover .mc-ing-nome { text-decoration: underline; text-underline-offset: 3px; }
+/* Genérico: nome + quantidade numa linha só (a coluna alarga; a tabela rola). */
+.mc-ing-btn:not(.fixado) .mc-ing-nome { white-space: nowrap; }
 /* Quantidade ao lado do nome (só no ingrediente genérico) */
-.mc-ing-qtd { font-weight: 400; color: var(--ink-faint); font-size: .82rem; margin-left: 6px; }
+.mc-ing-qtd { font-weight: 400; color: var(--ink-faint); font-size: .82rem; margin-left: 6px; white-space: nowrap; }
+/* Reserva largura para o rótulo do ingrediente não espremer */
+.mc-canto, .mc-ing { min-width: 160px; }
 
 /* Célula de preço: clicável, abre os produtos daquele mercado */
 .mc-cel-btn {
