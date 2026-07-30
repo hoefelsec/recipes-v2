@@ -2,6 +2,9 @@
    Todos compartilham a moldura `.pref-form` / `.pref-head` / `.pref-foot`. */
 
 dialog {
+  /* Um <dialog> modal se centraliza com `margin: auto` — e o reset `* { margin: 0 }`
+     do base.css apaga isso, jogando a janela para o canto superior esquerdo. Devolve. */
+  margin: auto;
   border: none;
   padding: 0;
   border-radius: var(--radius-lg);
